@@ -1,1 +1,1 @@
-export default (result: JSONValue): boolean => true
+export default (): boolean => true

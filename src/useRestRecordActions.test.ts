@@ -10,7 +10,7 @@ describe("useRestRecordActions", () => {
     it("fetch", async () => {
       const { result } = renderHook(() => useRestRecordActions<Pet>("pet", { api: { domain } }))
 
-      const scope = nock(domain)
+      nock(domain)
         .get("/pet/")
         .reply(200, { name: "Fifi", type: "dog" })
       const [, { index }] = result.current
@@ -28,7 +28,7 @@ describe("useRestRecordActions", () => {
       const item = { name: "Fifi", type: "dog" }
       const updatedItem = { ...item, name: "Fififi" }
 
-      const scope = nock(domain)
+      nock(domain)
         .get("/pet/")
         .reply(200, item)
         .post("/pet/")

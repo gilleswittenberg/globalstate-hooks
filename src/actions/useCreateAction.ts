@@ -14,8 +14,7 @@ export default <
   method: Method | undefined,
   config: Config,
   actionCreators: ActionCreators,
-  dispatch: Dispatch<Action>,
-  state?: State
+  dispatch: Dispatch<Action>
 ) => {
   const { additionalHeaders } = config
   const methods = useMethods(additionalHeaders)

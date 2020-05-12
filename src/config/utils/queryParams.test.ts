@@ -17,5 +17,5 @@ it("multiple", () => {
 })
 
 it("escape", () => {
-  expect(queryParams({ k_s: "a b" })).toBe("?k_s=a%20b")
+  expect(queryParams({ ks: "a b" })).toBe("?ks=a%20b")
 })

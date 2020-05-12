@@ -30,7 +30,7 @@ const computeState = (state: BaseState): ComputedState => {
   const isInitialized = data !== undefined
   const errorMessages = requests
     .filter(request => request.ok === false && request.errorMessage !== undefined)
-    .map(request => request.errorMessage!)
+    .map(request => request.errorMessage)
   const errorMessage = requests[requests.length - 1]?.errorMessage
   const hasError = errorMessage !== undefined
   return {
@@ -96,6 +96,8 @@ const createActionCreatorsRecord = <Schema extends JSONObject>() => ({
   ...actionCreators,
   createSetData: createSetData as (data: Schema | undefined) => RecordAction<Schema>
 })
+// @TODO: Remove any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ActionCreatorsRecord = Record<string, (a?: any) => RecordAction>
 const createActionCreatorsItems = <Schema extends JSONObject>() => ({
   ...actionCreators,
@@ -104,6 +106,8 @@ const createActionCreatorsItems = <Schema extends JSONObject>() => ({
   createUpdateItem: createUpdateItem as (index: Index, item: Schema) => ItemsAction<Schema>,
   createRemoveItem: createRemoveItem as (index: Index) => ItemsAction<Schema>
 })
+// @TODO: Remove any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ActionCreatorsItems = Record<string, (a?: any, b?: any) => ItemsAction>
 
 const isBaseActionType = (type: string): boolean =>

@@ -1,7 +1,6 @@
 import nock from "nock"
 import { renderHook, act } from "@testing-library/react-hooks"
 import useRestActions from "./useRestActions"
-import { get } from "./fetch"
 
 const domain = "http://localhost/"
 type Pet = { id?: number, name: string, type: "dog" | "cat" }
@@ -11,7 +10,7 @@ describe("useRestActions", () => {
     it("fetch", async () => {
       const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }))
 
-      const scope = nock(domain)
+      nock(domain)
         .get("/pets/")
         .reply(200, [
           { name: "Fifi", type: "dog" },
@@ -33,7 +32,7 @@ describe("useRestActions", () => {
         validate: () => false
       }))
 
-      const scope = nock(domain)
+      nock(domain)
         .get("/pets/")
         .reply(200, [
           { name2: "Fifi", type: "dog" }
@@ -52,7 +51,7 @@ describe("useRestActions", () => {
 
       const item = { name: "Fifi", type: "dog" }
 
-      const scope = nock(domain)
+      nock(domain)
         .post("/pets/")
         .reply(201, item)
       const [, { create }] = result.current
@@ -70,7 +69,7 @@ describe("useRestActions", () => {
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
 
-      const scope = nock(domain)
+      nock(domain)
         .get(`/pets/${ id }/`)
         .reply(200, item)
       const [, { read }] = result.current
@@ -88,7 +87,7 @@ describe("useRestActions", () => {
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
 
-      const scope = nock(domain)
+      nock(domain)
         .put(`/pets/${ id }/`)
         .reply(200, item)
       const [, { update }] = result.current
@@ -99,13 +98,13 @@ describe("useRestActions", () => {
     })
 
     xit("update item", async () => {
-      const { result, waitForNextUpdate } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }))
+      const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }))
 
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
       const updatedItem = { ...item, name: "Fififi" }
 
-      const scope = nock(domain)
+      nock(domain)
         .get("/pets/")
         .reply(200, [item])
         .put(`/pets/${ id }/`)
@@ -115,7 +114,6 @@ describe("useRestActions", () => {
       await act(async () => await index())
 
       const [state] = result.current
-      console.log(state)
       expect(state.data).toEqual([item])
 
       const [, { update }] = result.current
@@ -134,7 +132,7 @@ describe("useRestActions", () => {
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
 
-      const scope = nock(domain)
+      nock(domain)
         .get("/pets/")
         .reply(200, [item])
         .delete(`/pets/${ id }/`)
@@ -219,7 +217,7 @@ describe("useRestActions", () => {
 
       const item = { id, name: "Fifi", type: "dog" }
 
-      const scope = nock(domain)
+      nock(domain)
         .get(`/pets/detail/${ id }/`)
         .reply(200, item)
       const [, { read }] = result.current
@@ -232,10 +230,10 @@ describe("useRestActions", () => {
     it("mapResponse", async () => {
       const { result } = renderHook(() => useRestActions<Pet>("pets", {
         api: { domain },
-        mapResponse: (response: any) => response.results
+        mapResponse: (response: { results: JSONValue }) => response.results
       }))
 
-      const scope = nock(domain)
+      nock(domain)
         .get("/pets/")
         .reply(200, {
             results: [
@@ -257,14 +255,14 @@ describe("useRestActions", () => {
     it("mapBody", async () => {
       const { result } = renderHook(() => useRestActions<Pet>("pets", {
         api: { domain },
-        mapBody: (body: any) => ({ ...body, extra: "Extra" })
+        mapBody: (body: JSONValue) => ({ ...body, extra: "Extra" })
       }))
 
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
       const itemExtra = { ...item, extra: "Extra" }
 
-      const scope = nock(domain)
+      nock(domain)
         .put(`/pets/${ id }/`, itemExtra)
         .reply(200, itemExtra)
       const [, { update }] = result.current
@@ -275,13 +273,13 @@ describe("useRestActions", () => {
       let called = 0
       const { result } = renderHook(() => useRestActions<Pet>("pets", {
         api: { domain },
-        afterSuccess: (request: ResolvedRequest) => { called++ }
+        afterSuccess: () => { called++ }
       }))
 
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
 
-      const scope = nock(domain)
+      nock(domain)
         .get(`/pets/${ id }/`)
         .reply(200, item)
       const [, { read }] = result.current
@@ -293,13 +291,13 @@ describe("useRestActions", () => {
       let called = 0
       const { result } = renderHook(() => useRestActions<Pet>("pets", {
         api: { domain },
-        afterFailure: (request: ResolvedRequest) => { called++ }
+        afterFailure: () => { called++ }
       }))
 
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
 
-      const scope = nock(domain)
+      nock(domain)
         .post("/pets/")
         .reply(400, { error: "INVALID_REQUEST" })
       const [, { create }] = result.current
