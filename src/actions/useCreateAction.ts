@@ -6,7 +6,7 @@ import useMethods from "../methods/useMethods"
 import createConfig from "../config/createConfig"
 
 export default <
-  Schema,
+  Schema extends JsonObject,
   Action extends ItemsAction<Schema> | RecordAction<Schema> = ItemsAction<Schema>,
   State extends ItemsState<Schema> | RecordState<Schema> = ItemsState<Schema>
 >(
@@ -21,10 +21,10 @@ export default <
 
   type MakeRequestOverload = {
     (method: "GET" | "DELETE", url: RequestURL): Promise<ResolvedRequest>
-    (method: "POST" | "PUT" | "PATCH", url: RequestURL, data: Schema): Promise<ResolvedRequest>
+    (method: "POST" | "PUT" | "PATCH", url: RequestURL, data: Json): Promise<ResolvedRequest>
   }
 
-  const makeRequest: MakeRequestOverload = async (method: Method, url: RequestURL, data?: Schema) => {
+  const makeRequest: MakeRequestOverload = async (method: Method, url: RequestURL, data: Json = null) => {
     const {
       createStartGetting,
       createStopGetting,
@@ -71,34 +71,40 @@ export default <
 
   type DoHandleSuccessOverload = {
     (): void
-    (a: JSONObject | JSONValue, id?: Id | Path): void
-    (a: JSONValue): void
+    (a: Json, id: Id | KeyPath): void
+    (a: Json): void
   }
-  const doHandleSuccess: DoHandleSuccessOverload = (result?: JSONObject | JSONArray | JSONValue, id?: Id | Path) => {
-    if (id !== undefined) {
-      (handleSuccess as (result: JSONObject | JSONValue, id: Id | Path) => void)(result, id)
+  const doHandleSuccess: DoHandleSuccessOverload = (result?: Json, id?: Id | KeyPath) => {
+    if (result !== undefined && id !== undefined) {
+      (handleSuccess as (result: Json, id: Id | KeyPath) => void)(result, id)
     } else if (result !== undefined) {
-      (handleSuccess as (result: JSONArray) => void)(result)
+      (handleSuccess as (result: Json) => void)(result)
     } else {
       (handleSuccess as () => void)()
     }
   }
 
   type ReturnLocalOverload = {
-    (): Promise<void>
-    (a: Schema | JSONValue): Promise<void>
-    (a: Id, b: Schema): Promise<void>
-    (a: Path, b: JSONValue): Promise<void>
+    (): void
+    (a: Schema | Json): void
+    (a: Id, b: Schema | Json): void
+    (a: KeyPath, b: Json): void
   }
-  const retLocal: ReturnLocalOverload = async (a?: Id | Path | Schema | JSONValue, b?: Schema | JSONValue) => {
+  const retLocal: ReturnLocalOverload = async (a?: Id | KeyPath | Schema | Json, b?: Schema | Json) => {
     const bb = b !== undefined ? b : a
     const aa = b !== undefined ? a : undefined
-    doHandleSuccess(bb, aa as Id | Path)
+    if (bb !== undefined && aa !== undefined) {
+      doHandleSuccess(bb, aa as Id | KeyPath)
+    } else if (bb !== undefined) {
+      doHandleSuccess(bb)
+    } else {
+      doHandleSuccess()
+    }
   }
 
   type ReturnOverload = {
     (a: Id | Schema | undefined, b: Schema | undefined, conf: Partial<Config>): Promise<void>
-    (a: Id, b: Schema): Promise<void>
+    (a: Id | undefined, b: Schema): Promise<void>
     (a: Id): Promise<void>
     (a: Schema): Promise<void>
     (): Promise<void>
@@ -116,7 +122,7 @@ export default <
 
     // REST request
     const url = createUrl(api, id)
-    const mappedData = data !== undefined ? mapBody(data) : undefined
+    const mappedData = mapBody(data)
     const request =
       method === "GET" || method === "DELETE" ?
         await makeRequest(method, url) :
@@ -124,7 +130,13 @@ export default <
     if (request.ok) {
       const result = mapResponse(request.result)
       if (handleInvalid(result, validate(result), invalidHandling)) return
-      doHandleSuccess(result, id)
+      if (result !== undefined && id !== undefined) {
+        doHandleSuccess(result, id)
+      } else if (result !== undefined) {
+        doHandleSuccess(result)
+      } else {
+        doHandleSuccess()
+      }
       // @TODO: Pass result, id, config
       afterSuccess(request)
     } else {

@@ -3,7 +3,7 @@ import { renderHook, act } from "@testing-library/react-hooks"
 import useRestRecordActions from "./useRestRecordActions"
 
 const domain = "http://localhost/"
-type Pet = { name: string, type: "dog" | "cat" }
+type Pet = { name: string, type: string }
 
 describe("useRestRecordActions", () => {
   describe("index", () => {
@@ -41,7 +41,7 @@ describe("useRestRecordActions", () => {
       expect(state.data).toEqual(item)
 
       const [, { update }] = result.current
-      await act(async () => await update(undefined, updatedItem))
+      await act(async () => await update(updatedItem))
 
       const [state1] = result.current
       expect(state1.data).toEqual(updatedItem)
@@ -59,8 +59,7 @@ describe("useRestRecordActions", () => {
 
   describe("updateState", () => {
     it("update", async () => {
-      const id = 3
-      const item = { id, name: "Fifi", type: "dog" }
+      const item = { name: "Fifi", type: "dog" }
       const updatedItem = { ...item, name: "Fififi" }
 
       const { result } = renderHook(() => useRestRecordActions<Pet>("pets", undefined, item))

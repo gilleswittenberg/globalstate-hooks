@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/gilleswittenberg/globalstate-hooks#readme",
   "dependencies": {
+    "deepmerge": "^4.2.2",
     "immer": "^6.0.5",
     "react": "^16.13.1"
   },

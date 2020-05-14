@@ -2,7 +2,7 @@ import { useRestRecordReducer, RecordAction } from "./useRestReducer"
 import useConfig from "./config/useConfig"
 import useCreateAction from "./actions/useCreateAction"
 
-export default <Schema>() => {
+export default <Schema extends JsonObject>() => {
   const config = useConfig("")
   const [
     state,
@@ -14,7 +14,7 @@ export default <Schema>() => {
     const { createSetData } = actionCreators
     dispatch(createSetData(result))
   }
-  const update = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessUpdate, undefined, config, actionCreators, dispatch, state)
+  const update = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessUpdate, undefined, config, actionCreators, dispatch)
 
   return [state, { update }] as const
 }

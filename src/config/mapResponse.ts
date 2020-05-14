@@ -1,1 +1,1 @@
-export default (result: JSONValue): JSONValue => result
+export default (result?: Json): Json | undefined => result

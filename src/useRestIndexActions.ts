@@ -3,7 +3,7 @@ import useConfig from "./config/useConfig"
 import useCreateAction from "./actions/useCreateAction"
 //import getItemsIndex from "./utils/getItemsIndex"
 
-const useRestIndexActions = <Schema>(name: string, conf?: Partial<Config>, initialData?: Schema[]) => {
+const useRestIndexActions = <Schema extends JsonObject>(name: string, conf?: Partial<Config>, initialData?: Schema[]) => {
   const config = useConfig(name, conf)
 
   const [
@@ -22,7 +22,7 @@ const useRestIndexActions = <Schema>(name: string, conf?: Partial<Config>, initi
     const { createClear } = actionCreators
     dispatch(createClear())
   }
-  const clear = useCreateAction<Schema, ItemsAction<Schema>>(handleSuccessClear, undefined, config, actionCreators, dispatch, state)
+  const clear = useCreateAction<Schema, ItemsAction<Schema>>(handleSuccessClear, undefined, config, actionCreators, dispatch)
 
   return [state, { index, clear }] as const
 

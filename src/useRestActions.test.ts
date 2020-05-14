@@ -3,7 +3,7 @@ import { renderHook, act } from "@testing-library/react-hooks"
 import useRestActions from "./useRestActions"
 
 const domain = "http://localhost/"
-type Pet = { id?: number, name: string, type: "dog" | "cat" }
+type Pet = { name: string, type: string }
 
 describe("useRestActions", () => {
   describe("index", () => {
@@ -186,7 +186,7 @@ describe("useRestActions", () => {
       await act(async () => await updatePartialState([1, "name"], "Fififi"))
 
       const [state] = result.current
-      expect(state.data[1]).toEqual({ name: "Fififi", type: "dog" })
+      expect(state.data?.[1]).toEqual({ name: "Fififi", type: "dog" })
     })
   })
 
@@ -230,7 +230,7 @@ describe("useRestActions", () => {
     it("mapResponse", async () => {
       const { result } = renderHook(() => useRestActions<Pet>("pets", {
         api: { domain },
-        mapResponse: (response: { results: JSONValue }) => response.results
+        mapResponse: (response: any) => response.results
       }))
 
       nock(domain)
@@ -255,7 +255,7 @@ describe("useRestActions", () => {
     it("mapBody", async () => {
       const { result } = renderHook(() => useRestActions<Pet>("pets", {
         api: { domain },
-        mapBody: (body: JSONValue) => ({ ...body, extra: "Extra" })
+        mapBody: (body: any) => ({ ...body, extra: "Extra" })
       }))
 
       const id = 3

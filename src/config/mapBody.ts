@@ -1,1 +1,1 @@
-export default (body: JSONValue): JSONValue => body
+export default (body?: Json): Json => body !== undefined ? body : null

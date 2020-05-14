@@ -13,9 +13,11 @@ import {
   itemsReducer
 } from "./useRestReducer"
 
+
 describe("baseState", () => {
   it("createStartGetting, createStopGetting", () => {
-    const state = recordReducer(initialState, createStartGetting())
+    type Schema = {}
+    const state = recordReducer<Schema>(initialState, createStartGetting())
     expect(state.isGetting).toBe(true)
     const state1 = recordReducer(state, createStopGetting())
     expect(state1.isGetting).toBe(false)
@@ -24,54 +26,63 @@ describe("baseState", () => {
 
 describe("computedState", () => {
   it("isFetching", () => {
-    const state = recordReducer(initialState, createStartGetting())
+    type Schema = {}
+    const state = recordReducer<Schema>(initialState, createStartGetting())
     expect(state.isFetching).toBe(true)
   })
 
   it("isUpdating", () => {
-    const state = recordReducer(initialState, createStartPosting())
+    type Schema = {}
+    const state = recordReducer<Schema>(initialState, createStartPosting())
     expect(state.isUpdating).toBe(true)
   })
 
   it("isInitialized", () => {
-    const state = recordReducer(initialState, createStartGetting())
+    type Schema = {}
+    const state = recordReducer<Schema>(initialState, createStartGetting())
     expect(state.isInitialized).toBe(false)
   })
 })
 
 describe("recordReducer", () => {
   it("createSetData", () => {
-    const state = recordReducer(initialState, createSetData({ k: "v" }))
+    type Schema = { k: string }
+    const state = recordReducer<Schema>(initialState, createSetData({ k: "v" }))
     expect(state.data).toEqual({ k: "v" })
   })
 
   it("createUpdateData", () => {
-    const state = recordReducer(initialState, createSetData({ k: "v", l: "w" }))
-    const state1 = recordReducer(state, createUpdateData({ l: "x" }))
+    type Schema = { k: string, l: string }
+    const state = recordReducer<Schema>(initialState, createSetData({ k: "v", l: "w" }))
+    const state1 = recordReducer<Schema>(state, createUpdateData<Schema>({ l: "x" }))
     expect(state1.data).toEqual({ k: "v", l: "x" })
   })
 })
 
 describe("itemsReducer", () => {
   it("createSetItems", () => {
-    const state = itemsReducer(initialState, createSetItems([{ k: "v" }, { l: "w" }]))
-    expect(state.data).toEqual([{ k: "v" }, { l: "w" }])
+    type Schema = { k: string }
+    const state = itemsReducer<Schema>(initialState, createSetItems([{ k: "v" }, { k: "w" }]))
+    expect(state.data).toEqual([{ k: "v" }, { k: "w" }])
   })
 
   it("createAddItem", () => {
-    const state = itemsReducer(initialState, createAddItem({ k: "v" }))
+    type Schema = { k: string }
+    const state = itemsReducer<Schema>(initialState, createAddItem({ k: "v" }))
     expect(state.data).toEqual([{ k: "v" }])
   })
 
   it("createUpdateItem", () => {
-    const state = itemsReducer(initialState, createSetItems([{ k: "v" }, { l: "w" }]))
-    const state1 = itemsReducer(state, createUpdateItem(1, { m: "x" }))
-    expect(state1.data).toEqual([{ k: "v" }, { m: "x" }])
+    type Schema = { k: string }
+    const state = itemsReducer<Schema>(initialState, createSetItems([{ k: "v" }, { k: "w" }]))
+    const state1 = itemsReducer<Schema>(state, createUpdateItem(1, { k: "x" }))
+    expect(state1.data).toEqual([{ k: "v" }, { k: "x" }])
   })
 
   it("createRemoveItem", () => {
-    const state = itemsReducer(initialState, createSetItems([{ k: "v" }, { l: "w" }, { m: "x" }]))
-    const state1 = itemsReducer(state, createRemoveItem(1))
-    expect(state1.data).toEqual([{ k: "v" }, { m: "x" }])
+    type Schema = { k: string }
+    const state = itemsReducer<Schema>(initialState, createSetItems([{ k: "v" }, { k: "w" }, { k: "x" }]))
+    const state1 = itemsReducer<Schema>(state, createRemoveItem(1))
+    expect(state1.data).toEqual([{ k: "v" }, { k: "x" }])
   })
 })

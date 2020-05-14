@@ -1,11 +1,23 @@
-// JSON
-declare type JSONValue = boolean | number | string | null | JSONObject | JSONArray
-declare type JSONArray = JSONValue[]
-declare type JSONObject = Record<string, JSONValue>
+// Helper types
+type Optional<T> = T | undefined
+
+// Json
+type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [k: string]: Json }
+  | Json[]
+declare type JsonObject = Record<string, Json>
+declare type JsonArray = Json[]
 
 // Item
 declare type Index = number
 declare type Id = number | string
+declare type OId = Id | undefined
+declare type Key = string
+declare type KeyPath = (Key | Index)[]
 // @TODO: Make key `id` configurable
 declare type IdentifyBy = "ID" | "INDEX"
 declare type Identifiable = { id: Id }
@@ -26,10 +38,9 @@ declare type MethodHandlers = {
   del: (url: RequestURL) => Promise<ResolvedRequest>
 }
 declare type RequestHeaders = Record<string, string>
-declare type RequestBody = JSONValue
+declare type RequestBody = Json
 declare type Status = number
-declare type Response = JSONValue
-declare type Result = JSONValue
+declare type Result = Json
 declare type OResult = Result | undefined
 declare type ErrorMessage = string
 declare type OErrorMessage = ErrorMessage | undefined
@@ -50,9 +61,9 @@ declare type ResolvedRequests = ResolvedRequest[]
 
 // Factories, mapping, handling
 declare type CreateURL = (name: string, id?: Id, suffix?: Suffix, params?: QueryParams) => RequestURL
-declare type MapResponse = (result: JSONValue) => JSONValue
-declare type MapBody = (body: JSONValue) => JSONValue
-declare type Validate = (result: JSONValue) => JSONValue
+declare type MapResponse = (result?: Json) => Json | undefined
+declare type MapBody = (body?: Json) => Json
+declare type Validate = (result?: Json) => boolean
 declare type InvalidHandling = "silent" | "warn" | "abort"
 declare type AfterMethod = (request: ResolvedRequest) => void
 
@@ -77,16 +88,16 @@ declare type Config = {
 }
 
 // State
-declare type BaseState = {
+declare type BaseState<Data = any> = {
   isGetting: boolean
   isPosting: boolean
   isPutting: boolean
   isPatching: boolean
   isDeleting: boolean
-  data: undefined | Data | Data[]
+  data: undefined | Data
   requests: ResolvedRequests
 }
-declare type ComputedState = BaseState & {
+declare type ComputedState<Data = any> = BaseState<Data> & {
   isFetching: boolean
   isUpdating: boolean
   isInitialized: boolean
@@ -94,13 +105,16 @@ declare type ComputedState = BaseState & {
   errorMessage: ErrorMessage | undefined
   hasError: boolean
 }
-declare type RecordState<Schema extends JSONObject> = ComputedState & { data: undefined | Schema }
-declare type ItemsState<Schema extends JSONObject> = ComputedState & { data: undefined | Schema[] }
+declare type RecordState<Schema extends JsonObject> = ComputedState<Schema>
+declare type ItemsState<Schema extends JsonObject> = ComputedState<Schema[]>
 
 // Handle success
 // @TODO: Can we use function overloading here?
-declare type HandleSuccess =
+declare type HandleSuccess = any
+/*
   | (() => void)
-  | ((result: JSONArray) => void)
-  | ((result: JSONObject, id: Id) => void)
-  | ((data: JSONValue, path: Path) => void)
+  | ((result: JsonObject) => void)
+  | ((result: Json) => void)
+  | ((result: Json, id: Id) => void)
+  | ((data: Json, path: KeyPath) => void)
+*/

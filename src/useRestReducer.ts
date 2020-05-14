@@ -8,29 +8,29 @@ export type Action =
   | { type: "SET_IS_PATCHING", payload: { isPatching: boolean } }
   | { type: "SET_IS_DELETING", payload: { isDeleting: boolean } }
   | { type: "ADD_REQUEST", payload: { request: ResolvedRequest } }
-  | { type: "UPDATE_PARTIAL", payload: { path: Path, data: JSONValue } }
+  | { type: "UPDATE_PARTIAL", payload: { path: Path, data: Json } }
   | { type: "CLEAR" }
 
-export type RecordAction<Schema extends JSONObject = JSONObject> =
+export type RecordAction<Schema extends JsonObject = JsonObject> =
   Action
   | { type: "SET_DATA", payload: { data: Schema } }
   | { type: "UPDATE_DATA", payload: { data: Partial<Schema> } }
 
-export type ItemsAction<Schema extends JSONObject = JSONObject> =
+export type ItemsAction<Schema extends JsonObject = JsonObject> =
   Action
   | { type: "SET_ITEMS", payload: { items: Schema[] } }
   | { type: "ADD_ITEM", payload: { item: Schema } }
   | { type: "UPDATE_ITEM", payload: { index: Index, item: Schema } }
   | { type: "REMOVE_ITEM", payload: { index: Index } }
 
-const computeState = (state: BaseState): ComputedState => {
+const computeState = <State extends BaseState = BaseState>(state: State): ComputedState => {
   const { isGetting, isPosting, isPutting, isPatching, isDeleting, data, requests } = state
   const isUpdating = isPosting || isPutting || isPatching || isDeleting
   const isFetching = isGetting || isUpdating
   const isInitialized = data !== undefined
   const errorMessages = requests
     .filter(request => request.ok === false && request.errorMessage !== undefined)
-    .map(request => request.errorMessage)
+    .map(request => request.errorMessage) as ErrorMessages
   const errorMessage = requests[requests.length - 1]?.errorMessage
   const hasError = errorMessage !== undefined
   return {
@@ -66,15 +66,15 @@ export const createStartDeleting = (): Action => ({ type: "SET_IS_DELETING", pay
 export const createStopDeleting = (): Action => ({ type: "SET_IS_DELETING", payload: { isDeleting: false } })
 export const createAddRequest = (request: ResolvedRequest): Action => ({ type: "ADD_REQUEST", payload: { request } })
 export const createClear = (): Action => ({ type: "CLEAR" })
-export const createUpdatePartial = (path: Path, data: JSONValue): Action => ({ type: "UPDATE_PARTIAL", payload: { path, data } })
+export const createUpdatePartial = (path: Path, data: Json): Action => ({ type: "UPDATE_PARTIAL", payload: { path, data } })
 
-export const createSetData = <Schema extends JSONObject>(data: Schema): RecordAction<Schema> => ({ type: "SET_DATA", payload: { data } })
-export const createUpdateData = <Schema extends JSONObject>(data: Partial<Schema>): RecordAction<Schema> => ({ type: "UPDATE_DATA", payload: { data } })
+export const createSetData = <Schema extends JsonObject>(data: Schema): RecordAction<Schema> => ({ type: "SET_DATA", payload: { data } })
+export const createUpdateData = <Schema extends JsonObject>(data: Partial<Schema>): RecordAction<Schema> => ({ type: "UPDATE_DATA", payload: { data } })
 
-export const createSetItems = <Schema extends JSONObject>(items: Schema[]): ItemsAction<Schema> => ({ type: "SET_ITEMS", payload: { items } })
-export const createAddItem = <Schema extends JSONObject>(item: Schema): ItemsAction<Schema> => ({ type: "ADD_ITEM", payload: { item } })
-export const createUpdateItem = <Schema extends JSONObject>(index: Index, item: Schema): ItemsAction<Schema> => ({ type: "UPDATE_ITEM", payload: { index, item } })
-export const createRemoveItem = <Schema extends JSONObject>(index: Index): ItemsAction<Schema> => ({ type: "REMOVE_ITEM", payload: { index } })
+export const createSetItems = <Schema extends JsonObject>(items: Schema[]): ItemsAction<Schema> => ({ type: "SET_ITEMS", payload: { items } })
+export const createAddItem = <Schema extends JsonObject>(item: Schema): ItemsAction<Schema> => ({ type: "ADD_ITEM", payload: { item } })
+export const createUpdateItem = <Schema extends JsonObject>(index: Index, item: Schema): ItemsAction<Schema> => ({ type: "UPDATE_ITEM", payload: { index, item } })
+export const createRemoveItem = <Schema extends JsonObject>(index: Index): ItemsAction<Schema> => ({ type: "REMOVE_ITEM", payload: { index } })
 
 const actionCreators = {
   createStartGetting,
@@ -92,14 +92,14 @@ const actionCreators = {
   createUpdatePartial
 }
 export type ActionCreators = typeof actionCreators
-const createActionCreatorsRecord = <Schema extends JSONObject>() => ({
+const createActionCreatorsRecord = <Schema extends JsonObject>() => ({
   ...actionCreators,
   createSetData: createSetData as (data: Schema | undefined) => RecordAction<Schema>
 })
 // @TODO: Remove any
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ActionCreatorsRecord = Record<string, (a?: any) => RecordAction>
-const createActionCreatorsItems = <Schema extends JSONObject>() => ({
+const createActionCreatorsItems = <Schema extends JsonObject>() => ({
   ...actionCreators,
   createSetItems: createSetItems as (items: Schema[]) => ItemsAction<Schema>,
   createAddItem: createAddItem as (item: Schema) => ItemsAction<Schema>,
@@ -145,7 +145,7 @@ const baseReducer = (state: BaseState, action: Action): BaseState => {
     case "ADD_REQUEST": {
       const { request } = action.payload
       const { requests } = state
-      const nextRequests = produce(requests, draft => {
+      const nextRequests = produce(requests, (draft: ResolvedRequests) => {
         draft.push(request)
       })
       return computeState({ ...state, requests: nextRequests })
@@ -153,15 +153,21 @@ const baseReducer = (state: BaseState, action: Action): BaseState => {
     case "UPDATE_PARTIAL": {
       const { path, data: updateData } = action.payload
       const { data } = state
-      const nextData = produce(data, (draft: JSONValue) => {
+      const nextData = produce(data, (draft: JsonObject | JsonArray) => {
         // @TODO: Find better way for generic length of path
         // @TODO: Optional chaining
         const l = path.length
+        // @ts-ignore
         if (l === 1) { draft[path[0]] = updateData }
+        // @ts-ignore
         if (l === 2) { draft[path[0]][path[1]] = updateData }
+        // @ts-ignore
         if (l === 3) { draft[path[0]][path[1]][path[2]] = updateData }
+        // @ts-ignore
         if (l === 4) { draft[path[0]][path[1]][path[2]][path[3]] = updateData }
+        // @ts-ignore
         if (l === 5) { draft[path[0]][path[1]][path[2]][path[3]][path[4]] = updateData }
+        // @ts-ignore
         if (l === 6) { draft[path[0]][path[1]][path[2]][path[3]][path[4]][path[5]] = updateData }
       })
       return computeState({ ...state, data: nextData })
@@ -173,32 +179,32 @@ const baseReducer = (state: BaseState, action: Action): BaseState => {
   }
 }
 
-export const recordReducer = <Schema extends JSONObject>(state: RecordState<Schema>, action: RecordAction<Schema>): RecordState<Schema> => {
+export const recordReducer = <Schema extends JsonObject>(state: RecordState<Schema>, action: RecordAction<Schema>): RecordState<Schema> => {
   if (isBaseActionType(action.type)) return baseReducer(state, action as Action) as RecordState<Schema>
   switch (action.type) {
     case "SET_DATA": {
       const { data } = action.payload
-      return computeState({ ...state, data }) as RecordState<Schema>
+      return computeState<RecordState<Schema>>({ ...state, data })
     }
     case "UPDATE_DATA": {
       const { data } = action.payload
-      const { data: prevData } = state
+      const { data: prevData = {} } = state
       // @TODO: Delete keys
       // @TODO: Deep merge
       const nextData = { ...prevData, ...data }
-      return computeState({ ...state, data: nextData }) as RecordState<Schema>
+      return computeState<RecordState<Schema>>({ ...state, data: nextData } as RecordState<Schema>)
     }
     default:
       return state
   }
 }
 
-export const itemsReducer = <Schema extends JSONObject>(state: ItemsState<Schema>, action: ItemsAction<Schema>): ItemsState<Schema> => {
+export const itemsReducer = <Schema extends JsonObject>(state: ItemsState<Schema>, action: ItemsAction<Schema>): ItemsState<Schema> => {
   if (isBaseActionType(action.type)) return baseReducer(state, action as Action) as ItemsState<Schema>
   switch (action.type) {
     case "SET_ITEMS": {
       const { items } = action.payload
-      return computeState({ ...state, data: items }) as ItemsState<Schema>
+      return computeState({ ...state, data: items } as ItemsState<Schema>)
     }
     case "ADD_ITEM": {
       const { item } = action.payload
@@ -229,7 +235,7 @@ export const itemsReducer = <Schema extends JSONObject>(state: ItemsState<Schema
   }
 }
 
-export const useRestRecordReducer = <Schema extends JSONObject>(initialData?: Schema) => {
+export const useRestRecordReducer = <Schema extends JsonObject>(initialData?: Schema) => {
   const [state, dispatch] = useReducer(
     recordReducer as (state: RecordState<Schema>, action: RecordAction<Schema>) => RecordState<Schema>,
     { ...initialState, data: initialData } as RecordState<Schema>
@@ -237,7 +243,7 @@ export const useRestRecordReducer = <Schema extends JSONObject>(initialData?: Sc
   const actionCreators = createActionCreatorsRecord<Schema>()
   return [state, dispatch, actionCreators] as const
 }
-const useRestReducer = <Schema extends JSONObject>(initialData?: Schema[]) => {
+const useRestReducer = <Schema extends JsonObject>(initialData?: Schema[]) => {
   const [state, dispatch] = useReducer(
     itemsReducer as (state: ItemsState<Schema>, action: ItemsAction<Schema>) => ItemsState<Schema>,
     { ...initialState, data: initialData } as ItemsState<Schema>

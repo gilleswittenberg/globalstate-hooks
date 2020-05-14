@@ -4,7 +4,7 @@ import useCreateAction from "./actions/useCreateAction"
 import getItemsIndex from "./utils/getItemsIndex"
 import identifyByIndex from "./utils/identify"
 
-const useRestActions = <Schema>(name: string, conf?: Partial<Config>, initialData?: Schema[], identifyBy = "ID") => {
+const useRestActions = <Schema extends JsonObject>(name: string, conf?: Partial<Config>, initialData?: Schema[], identifyBy = "ID") => {
   const identify = identifyBy === "ID" ? getItemsIndex : identifyByIndex
 
   const config = useConfig(name, conf)
@@ -42,7 +42,7 @@ const useRestActions = <Schema>(name: string, conf?: Partial<Config>, initialDat
       dispatch(createAddItem(result))
     }
   }
-  const update = useCreateAction<Schema>(handleSuccessUpdate, "PUT", config, actionCreators, dispatch, state)
+  const update = useCreateAction<Schema>(handleSuccessUpdate, "PUT", config, actionCreators, dispatch)
 
   const handleSuccessDelete = (result: Schema, id: Id) => {
     const { createRemoveItem } = actionCreators
@@ -51,13 +51,13 @@ const useRestActions = <Schema>(name: string, conf?: Partial<Config>, initialDat
       dispatch(createRemoveItem(index))
     }
   }
-  const del = useCreateAction<Schema>(handleSuccessDelete, "DELETE", config, actionCreators, dispatch, state)
+  const del = useCreateAction<Schema>(handleSuccessDelete, "DELETE", config, actionCreators, dispatch)
 
   const handleSuccessClear = () => {
     const { createClear } = actionCreators
     dispatch(createClear())
   }
-  const clear = useCreateAction<Schema>(handleSuccessClear, undefined, config, actionCreators, dispatch, state)
+  const clear = useCreateAction<Schema>(handleSuccessClear, undefined, config, actionCreators, dispatch)
 
   const handleSuccessUpdateState = (result: Schema, id: Id) => {
     const { createUpdateItem } = actionCreators
@@ -65,13 +65,13 @@ const useRestActions = <Schema>(name: string, conf?: Partial<Config>, initialDat
     if (index === -1) return
     dispatch(createUpdateItem(index, result))
   }
-  const updateState = useCreateAction<Schema>(handleSuccessUpdateState, undefined, config, actionCreators, dispatch, state)
+  const updateState = useCreateAction<Schema>(handleSuccessUpdateState, undefined, config, actionCreators, dispatch)
 
-  const handleSuccessUpdatePartialState = (data: JSONValue, path: Path) => {
+  const handleSuccessUpdatePartialState = (data: Json, path: Path) => {
     const { createUpdatePartial } = actionCreators
     dispatch(createUpdatePartial(path, data))
   }
-  const updatePartialState = useCreateAction<Schema>(handleSuccessUpdatePartialState, undefined, config, actionCreators, dispatch, state)
+  const updatePartialState = useCreateAction<Schema>(handleSuccessUpdatePartialState, undefined, config, actionCreators, dispatch)
 
   return [state, { index, create, read, update, del, clear, updateState, updatePartialState }] as const
 }
