@@ -1,5 +1,6 @@
 // Helper types
 type Optional<T> = T | undefined
+type Plural<T> = T[]
 
 // Json
 type Json =
@@ -15,9 +16,9 @@ declare type JsonArray = Json[]
 // Item
 declare type Index = number
 declare type Id = number | string
-declare type OId = Id | undefined
+declare type OId = Optional<Id>
 declare type Key = string
-declare type KeyPath = (Key | Index)[]
+declare type KeyPath = Plural<Key | Index>
 // @TODO: Make key `id` configurable
 declare type IdentifyBy = "ID" | "INDEX"
 declare type Identifiable = { id: Id }
@@ -41,10 +42,10 @@ declare type RequestHeaders = Record<string, string>
 declare type RequestBody = Json
 declare type Status = number
 declare type Result = Json
-declare type OResult = Result | undefined
+declare type OResult = Optional<Result>
 declare type ErrorMessage = string
-declare type OErrorMessage = ErrorMessage | undefined
-declare type ErrorMessages = ErrorMessage[]
+declare type OErrorMessage = Optional<ErrorMessage>
+declare type ErrorMessages = Plural<ErrorMessage>
 
 declare type ResolvedRequest = {
   url: RequestURL
@@ -106,7 +107,7 @@ declare type ComputedState<Data = any> = BaseState<Data> & {
   hasError: boolean
 }
 declare type RecordState<Schema extends JsonObject> = ComputedState<Schema>
-declare type ItemsState<Schema extends JsonObject> = ComputedState<Schema[]>
+declare type ItemsState<Schema extends JsonObject> = ComputedState<Plural<Schema>>
 
 // Handle success
 // @TODO: Can we use function overloading here?
