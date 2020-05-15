@@ -97,21 +97,17 @@ describe("useRestActions", () => {
       expect(state.data).toEqual([item])
     })
 
-    xit("update item", async () => {
-      const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }))
+    it("update item", async () => {
 
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
       const updatedItem = { ...item, name: "Fififi" }
 
+      const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }, [item]))
+
       nock(domain)
-        .get("/pets/")
-        .reply(200, [item])
         .put(`/pets/${ id }/`)
         .reply(200, updatedItem)
-
-      const [, { index }] = result.current
-      await act(async () => await index())
 
       const [state] = result.current
       expect(state.data).toEqual([item])
@@ -120,26 +116,22 @@ describe("useRestActions", () => {
       await act(async () => await update(id, updatedItem))
 
       const [state1] = result.current
-      console.log(state1)
       expect(state1.data).toEqual([updatedItem])
     })
   })
 
   describe("delete", () => {
-    xit("fetch", async () => {
-      const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }))
+    it("fetch", async () => {
 
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
 
+      const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }, [item]))
+
       nock(domain)
-        .get("/pets/")
-        .reply(200, [item])
         .delete(`/pets/${ id }/`)
         .reply(204)
 
-      const [, { index }] = result.current
-      await act(async () => await index())
       const [state] = result.current
       expect(state.data).toEqual([item])
 
@@ -334,7 +326,7 @@ describe("useRestActions", () => {
       expect(state.data).toEqual([item, updatedItem1])
     })
 
-    xit("del", async () => {
+    it("del", async () => {
 
       const item = { name: "Mimi", type: "cat" }
       const item1 = { name: "Fifi", type: "dog" }

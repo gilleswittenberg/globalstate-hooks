@@ -43,7 +43,7 @@ const useRestActions = <Schema extends DefaultSchema>(name: string, conf?: Parti
   }
   const update = useCreateAction<Schema>(handleSuccessUpdate, makeRequest ? "PUT" : undefined, config, actionCreators, dispatch)
 
-  const handleSuccessDelete = (result: Schema, id: Id) => {
+  const handleSuccessDelete = (id: Id) => {
     const { createRemoveItem } = actionCreators
     const index = identify(state.data, id)
     if (index > -1) {

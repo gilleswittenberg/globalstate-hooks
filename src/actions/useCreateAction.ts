@@ -72,6 +72,7 @@ export default <
   type DoHandleSuccessOverload = {
     (): void
     (a: Json, id: Id | KeyPath): void
+    (a: undefined, id: Id): void
     (a: Json): void
   }
   const doHandleSuccess: DoHandleSuccessOverload = (result?: Json, id?: Id | KeyPath) => {
@@ -79,6 +80,8 @@ export default <
       (handleSuccess as (result: Json, id: Id | KeyPath) => void)(result, id)
     } else if (result !== undefined) {
       (handleSuccess as (result: Json) => void)(result)
+    } else if (id !== undefined) {
+      (handleSuccess as (id: Id) => void)(id)
     } else {
       (handleSuccess as () => void)()
     }
@@ -134,6 +137,8 @@ export default <
         doHandleSuccess(result, id)
       } else if (result !== undefined) {
         doHandleSuccess(result)
+      } else if (id !== undefined) {
+        doHandleSuccess(undefined, id)
       } else {
         doHandleSuccess()
       }
