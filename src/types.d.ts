@@ -106,8 +106,9 @@ declare type ComputedState<Data = any> = BaseState<Data> & {
   errorMessage: ErrorMessage | undefined
   hasError: boolean
 }
-declare type RecordState<Schema extends JsonObject> = ComputedState<Schema>
-declare type ItemsState<Schema extends JsonObject> = ComputedState<Plural<Schema>>
+declare type DefaultSchema = JsonObject
+declare type RecordState<Schema extends DefaultSchema> = ComputedState<Schema>
+declare type ItemsState<Schema extends DefaultSchema> = ComputedState<Plural<Schema>>
 
 // Handle success
 // @TODO: Can we use function overloading here?

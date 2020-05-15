@@ -6,7 +6,7 @@ import useMethods from "../methods/useMethods"
 import createConfig from "../config/createConfig"
 
 export default <
-  Schema extends JsonObject,
+  Schema extends DefaultSchema,
   Action extends ItemsAction<Schema> | RecordAction<Schema> = ItemsAction<Schema>,
   State extends ItemsState<Schema> | RecordState<Schema> = ItemsState<Schema>
 >(

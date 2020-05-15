@@ -2,7 +2,7 @@ import { useRestRecordReducer, RecordAction } from "./useRestReducer"
 import useConfig from "./config/useConfig"
 import useCreateAction from "./actions/useCreateAction"
 
-export default <Schema extends JsonObject>() => {
+export default <Schema extends DefaultSchema>() => {
   const config = useConfig("")
   const [
     state,

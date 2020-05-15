@@ -3,7 +3,7 @@ import useConfig from "./config/useConfig"
 import useCreateAction from "./actions/useCreateAction"
 //import getItemsIndex from "./utils/getItemsIndex"
 
-const useRestIndexActions = <Schema extends JsonObject>(name: string, conf?: Partial<Config>, initialData?: Schema[]) => {
+const useRestIndexActions = <Schema extends DefaultSchema>(name: string, conf?: Partial<Config>, initialData?: Schema[]) => {
   const config = useConfig(name, conf)
 
   const [
