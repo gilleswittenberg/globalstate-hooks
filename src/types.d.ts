@@ -19,10 +19,6 @@ declare type Id = number | string
 declare type OId = Optional<Id>
 declare type Key = string
 declare type KeyPath = Plural<Key | Index>
-// @TODO: Make key `id` configurable
-declare type IdentifyBy = "ID" | "INDEX"
-declare type Identifiable = { id: Id }
-declare type Identify = <Schema>(items: Schema[], id: Id) => Index
 
 // Request
 declare type Domain = string

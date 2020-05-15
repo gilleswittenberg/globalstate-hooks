@@ -196,7 +196,7 @@ describe("useRestActions", () => {
       const item1 = { name: "Fifi", type: "dog" }
       const updatedItem1 = { ...item1, name: "Fififi" }
 
-      const { result } = renderHook(() => useRestActions<Pet>("pets", undefined, [item, item1], "INDEX"))
+      const { result } = renderHook(() => useRestActions<Pet>("pets", undefined, [item, item1]))
 
       const [, { updateState }] = result.current
       await act(async () => await updateState(1, updatedItem1))
