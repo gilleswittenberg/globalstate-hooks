@@ -305,4 +305,46 @@ describe("useRestActions", () => {
       expect(called).toBe(1)
     })
   })
+
+  describe("local", () => {
+
+    it("create", async () => {
+
+      const item = { name: "Fifi", type: "dog" }
+
+      const { result } = renderHook(() => useRestActions<Pet>("pet", { local: true }))
+      const [, { create }] = result.current
+      await act(async () => await create(item))
+
+      const [state] = result.current
+      expect(state.data).toEqual([item])
+    })
+
+    it("update", async () => {
+
+      const item = { name: "Mimi", type: "cat" }
+      const item1 = { name: "Fifi", type: "dog" }
+      const updatedItem1 = { ...item1, name: "Fififi" }
+
+      const { result } = renderHook(() => useRestActions<Pet>("pet", { local: true }, [item, item1]))
+      const [, { update }] = result.current
+      await act(async () => await update(1, updatedItem1))
+
+      const [state] = result.current
+      expect(state.data).toEqual([item, updatedItem1])
+    })
+
+    xit("del", async () => {
+
+      const item = { name: "Mimi", type: "cat" }
+      const item1 = { name: "Fifi", type: "dog" }
+
+      const { result } = renderHook(() => useRestActions<Pet>("pet", { local: true }, [item, item1]))
+      const [, { del }] = result.current
+      await act(async () => await del(0))
+
+      const [state] = result.current
+      expect(state.data).toEqual([item1])
+    })
+  })
 })

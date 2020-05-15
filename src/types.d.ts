@@ -75,6 +75,7 @@ declare type APIConfig = {
 }
 declare type Config = {
   api: APIConfig
+  local: boolean
   additionalHeaders: RequestHeaders
   mapResponse: MapResponse
   mapBody: MapBody

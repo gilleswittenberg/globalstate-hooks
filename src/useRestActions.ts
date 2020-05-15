@@ -6,6 +6,7 @@ import identify from "./utils/identify"
 const useRestActions = <Schema extends DefaultSchema>(name: string, conf?: Partial<Config>, initialData?: Schema[]) => {
 
   const config = useConfig(name, conf)
+  const makeRequest = config.local === false
 
   const [
     state,
@@ -17,19 +18,19 @@ const useRestActions = <Schema extends DefaultSchema>(name: string, conf?: Parti
     const { createSetItems } = actionCreators
     dispatch(createSetItems(result))
   }
-  const index = useCreateAction<Schema>(handleSuccessIndex, "GET", config, actionCreators, dispatch)
+  const index = useCreateAction<Schema>(handleSuccessIndex, makeRequest ? "GET" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessCreate = (result: Schema) => {
     const { createAddItem } = actionCreators
     dispatch(createAddItem(result))
   }
-  const create = useCreateAction<Schema>(handleSuccessCreate, "POST", config, actionCreators, dispatch)
+  const create = useCreateAction<Schema>(handleSuccessCreate, makeRequest ? "POST" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessRead = (result: Schema) => {
     const { createAddItem } = actionCreators
     dispatch(createAddItem(result))
   }
-  const read = useCreateAction<Schema>(handleSuccessRead, "GET", config, actionCreators, dispatch)
+  const read = useCreateAction<Schema>(handleSuccessRead, makeRequest ? "GET" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessUpdate = (result: Schema, id: Id) => {
     const { createUpdateItem, createAddItem } = actionCreators
@@ -40,7 +41,7 @@ const useRestActions = <Schema extends DefaultSchema>(name: string, conf?: Parti
       dispatch(createAddItem(result))
     }
   }
-  const update = useCreateAction<Schema>(handleSuccessUpdate, "PUT", config, actionCreators, dispatch)
+  const update = useCreateAction<Schema>(handleSuccessUpdate, makeRequest ? "PUT" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessDelete = (result: Schema, id: Id) => {
     const { createRemoveItem } = actionCreators
@@ -49,7 +50,7 @@ const useRestActions = <Schema extends DefaultSchema>(name: string, conf?: Parti
       dispatch(createRemoveItem(index))
     }
   }
-  const del = useCreateAction<Schema>(handleSuccessDelete, "DELETE", config, actionCreators, dispatch)
+  const del = useCreateAction<Schema>(handleSuccessDelete, makeRequest ? "DELETE" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessClear = () => {
     const { createClear } = actionCreators

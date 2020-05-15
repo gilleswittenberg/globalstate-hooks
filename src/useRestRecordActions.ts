@@ -4,6 +4,7 @@ import useCreateAction from "./actions/useCreateAction"
 
 const useRestRecordActions = <Schema extends DefaultSchema>(name: string, conf?: Partial<Config>, initialData?: Schema) => {
   const config = useConfig(name, conf)
+  const makeRequest = config.local === false
 
   const [
     state,
@@ -15,13 +16,13 @@ const useRestRecordActions = <Schema extends DefaultSchema>(name: string, conf?:
     const { createSetData } = actionCreators
     dispatch(createSetData(result))
   }
-  const index = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessIndex, "GET", config, actionCreators, dispatch)
+  const index = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessIndex, makeRequest ? "GET" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessUpdate = (result: Schema) => {
     const { createSetData } = actionCreators
     dispatch(createSetData(result))
   }
-  const update = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessUpdate, "POST", config, actionCreators, dispatch)
+  const update = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessUpdate, makeRequest ? "POST" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessClear = () => {
     const { createClear } = actionCreators

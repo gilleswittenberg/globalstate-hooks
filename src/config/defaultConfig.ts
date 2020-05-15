@@ -8,6 +8,7 @@ const defaultConfig: Config = {
   api: {
     domain: "http://localhost/"
   },
+  local: false,
   additionalHeaders: {},
   mapResponse,
   mapBody,
