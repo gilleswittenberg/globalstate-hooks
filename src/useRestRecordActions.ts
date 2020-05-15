@@ -35,7 +35,7 @@ const useRestRecordActions = <Schema extends JsonObject>(name: string, conf?: Pa
   }
   const updateState = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessUpdateState, undefined, config, actionCreators, dispatch)
 
-  const handleSuccessUpdatePartialState = (data: Json, path: Path) => {
+  const handleSuccessUpdatePartialState = (data: Schema, path: KeyPath) => {
     const { createUpdatePartial } = actionCreators
     dispatch(createUpdatePartial(path, data))
   }
