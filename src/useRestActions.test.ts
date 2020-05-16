@@ -3,12 +3,15 @@ import { renderHook, act } from "@testing-library/react-hooks"
 import useRestActions from "./useRestActions"
 
 const domain = "http://localhost/"
+const name = "pets"
+const api = { domain, name }
+const config = { api }
 type Pet = { name: string, type: string }
 
 describe("useRestActions", () => {
   describe("index", () => {
     it("fetch", async () => {
-      const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }))
+      const { result } = renderHook(() => useRestActions<Pet>(config))
 
       nock(domain)
         .get("/pets/")
@@ -27,8 +30,8 @@ describe("useRestActions", () => {
     })
 
     it("runtime validation", async () => {
-      const { result } = renderHook(() => useRestActions<Pet>("pets", {
-        api: { domain },
+      const { result } = renderHook(() => useRestActions<Pet>({
+        api,
         validate: () => false
       }))
 
@@ -47,7 +50,7 @@ describe("useRestActions", () => {
 
   describe("create", () => {
     it("fetch", async () => {
-      const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }))
+      const { result } = renderHook(() => useRestActions<Pet>(config))
 
       const item = { name: "Fifi", type: "dog" }
 
@@ -64,7 +67,7 @@ describe("useRestActions", () => {
 
   describe("read", () => {
     it("fetch", async () => {
-      const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }))
+      const { result } = renderHook(() => useRestActions<Pet>(config))
 
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
@@ -82,7 +85,7 @@ describe("useRestActions", () => {
 
   describe("update", () => {
     it("fetch", async () => {
-      const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }))
+      const { result } = renderHook(() => useRestActions<Pet>(config))
 
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
@@ -103,7 +106,7 @@ describe("useRestActions", () => {
       const item = { id, name: "Fifi", type: "dog" }
       const updatedItem = { ...item, name: "Fififi" }
 
-      const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }, [item]))
+      const { result } = renderHook(() => useRestActions<Pet>(config, [item]))
 
       nock(domain)
         .put(`/pets/${ id }/`)
@@ -126,7 +129,7 @@ describe("useRestActions", () => {
       const id = 3
       const item = { id, name: "Fifi", type: "dog" }
 
-      const { result } = renderHook(() => useRestActions<Pet>("pets", { api: { domain } }, [item]))
+      const { result } = renderHook(() => useRestActions<Pet>(config, [item]))
 
       nock(domain)
         .delete(`/pets/${ id }/`)
@@ -145,7 +148,7 @@ describe("useRestActions", () => {
   describe("initialData", () => {
     it("items", async () => {
       const item = { name: "Fifi", type: "dog" }
-      const { result } = renderHook(() => useRestActions<Pet>("pets", undefined, [item]))
+      const { result } = renderHook(() => useRestActions<Pet>(undefined, [item]))
       const [state] = result.current
       expect(state.data).toEqual([item])
     })
@@ -157,7 +160,7 @@ describe("useRestActions", () => {
       const item = { id, name: "Fifi", type: "dog" }
       const updatedItem = { ...item, name: "Fififi" }
 
-      const { result } = renderHook(() => useRestActions<Pet>("pets", undefined, [item]))
+      const { result } = renderHook(() => useRestActions<Pet>(undefined, [item]))
 
       const [, { updateState }] = result.current
       await act(async () => await updateState(id, updatedItem))
@@ -172,7 +175,7 @@ describe("useRestActions", () => {
       const item = { name: "Mimi", type: "cat" }
       const item1 = { name: "Fifi", type: "dog" }
 
-      const { result } = renderHook(() => useRestActions<Pet>("pets", undefined, [item, item1]))
+      const { result } = renderHook(() => useRestActions<Pet>(undefined, [item, item1]))
 
       const [, { updatePartialState }] = result.current
       await act(async () => await updatePartialState([1, "name"], "Fififi"))
@@ -188,7 +191,7 @@ describe("useRestActions", () => {
       const item1 = { name: "Fifi", type: "dog" }
       const updatedItem1 = { ...item1, name: "Fififi" }
 
-      const { result } = renderHook(() => useRestActions<Pet>("pets", undefined, [item, item1]))
+      const { result } = renderHook(() => useRestActions<Pet>(undefined, [item, item1]))
 
       const [, { updateState }] = result.current
       await act(async () => await updateState(1, updatedItem1))
@@ -201,8 +204,9 @@ describe("useRestActions", () => {
   describe("config", () => {
     it("url", async () => {
       const id = 4
-      const { result } = renderHook(() => useRestActions<Pet>("pets", {
+      const { result } = renderHook(() => useRestActions<Pet>({
         api: {
+          ...api,
           url: `${ domain }pets/detail/${ id }/`
         }
       }))
@@ -220,8 +224,8 @@ describe("useRestActions", () => {
     })
 
     it("mapResponse", async () => {
-      const { result } = renderHook(() => useRestActions<Pet>("pets", {
-        api: { domain },
+      const { result } = renderHook(() => useRestActions<Pet>({
+        api,
         mapResponse: (response: any) => response.results
       }))
 
@@ -245,8 +249,8 @@ describe("useRestActions", () => {
     })
 
     it("mapBody", async () => {
-      const { result } = renderHook(() => useRestActions<Pet>("pets", {
-        api: { domain },
+      const { result } = renderHook(() => useRestActions<Pet>({
+        api,
         mapBody: (body: any) => ({ ...body, extra: "Extra" })
       }))
 
@@ -263,8 +267,8 @@ describe("useRestActions", () => {
 
     it("afterSuccess", async () => {
       let called = 0
-      const { result } = renderHook(() => useRestActions<Pet>("pets", {
-        api: { domain },
+      const { result } = renderHook(() => useRestActions<Pet>({
+        api,
         afterSuccess: () => { called++ }
       }))
 
@@ -281,8 +285,8 @@ describe("useRestActions", () => {
 
     it("afterFailure", async () => {
       let called = 0
-      const { result } = renderHook(() => useRestActions<Pet>("pets", {
-        api: { domain },
+      const { result } = renderHook(() => useRestActions<Pet>({
+        api,
         afterFailure: () => { called++ }
       }))
 
@@ -304,7 +308,7 @@ describe("useRestActions", () => {
 
       const item = { name: "Fifi", type: "dog" }
 
-      const { result } = renderHook(() => useRestActions<Pet>("pet", { local: true }))
+      const { result } = renderHook(() => useRestActions<Pet>({ api, local: true }))
       const [, { create }] = result.current
       await act(async () => await create(item))
 
@@ -318,7 +322,7 @@ describe("useRestActions", () => {
       const item1 = { name: "Fifi", type: "dog" }
       const updatedItem1 = { ...item1, name: "Fififi" }
 
-      const { result } = renderHook(() => useRestActions<Pet>("pet", { local: true }, [item, item1]))
+      const { result } = renderHook(() => useRestActions<Pet>({ api, local: true }, [item, item1]))
       const [, { update }] = result.current
       await act(async () => await update(1, updatedItem1))
 
@@ -331,7 +335,7 @@ describe("useRestActions", () => {
       const item = { name: "Mimi", type: "cat" }
       const item1 = { name: "Fifi", type: "dog" }
 
-      const { result } = renderHook(() => useRestActions<Pet>("pet", { local: true }, [item, item1]))
+      const { result } = renderHook(() => useRestActions<Pet>({ api, local: true }, [item, item1]))
       const [, { del }] = result.current
       await act(async () => await del(0))
 

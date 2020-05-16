@@ -3,9 +3,9 @@ import useConfig from "./config/useConfig"
 import useCreateAction from "./actions/useCreateAction"
 import identify from "./utils/identify"
 
-const useRestActions = <Schema extends DefaultSchema>(name: string, conf?: Partial<Config>, initialData?: Schema[]) => {
+const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, initialData?: Schema[]) => {
 
-  const config = useConfig(name, conf)
+  const config = useConfig(conf)
   const makeRequest = config.local === false
 
   const [

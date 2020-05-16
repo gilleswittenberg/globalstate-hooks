@@ -3,6 +3,9 @@ import { renderHook, act } from "@testing-library/react-hooks"
 import useRestRecordActions from "./useRestRecordActions"
 
 const domain = "http://localhost/"
+const name = "pet"
+const api = { domain, name }
+const config = { api }
 type Pet = { name: string, type: string }
 
 describe("useRestRecordActions", () => {
@@ -10,7 +13,7 @@ describe("useRestRecordActions", () => {
 
     describe("index", () => {
       it("fetch", async () => {
-        const { result } = renderHook(() => useRestRecordActions<Pet>("pet", { api: { domain } }))
+        const { result } = renderHook(() => useRestRecordActions<Pet>(config))
 
         nock(domain)
           .get("/pet/")
@@ -25,7 +28,7 @@ describe("useRestRecordActions", () => {
 
     describe("update", () => {
       it("record", async () => {
-        const { result } = renderHook(() => useRestRecordActions<Pet>("pet", { api: { domain } }))
+        const { result } = renderHook(() => useRestRecordActions<Pet>(config))
 
         const item = { name: "Fifi", type: "dog" }
         const updatedItem = { ...item, name: "Fififi" }
@@ -57,7 +60,7 @@ describe("useRestRecordActions", () => {
 
       const item = { name: "Fifi", type: "dog" }
 
-      const { result } = renderHook(() => useRestRecordActions<Pet>("pet", { local: true }))
+      const { result } = renderHook(() => useRestRecordActions<Pet>({ api, local: true }))
       const [, { update }] = result.current
       await act(async () => await update(item))
 
@@ -69,7 +72,7 @@ describe("useRestRecordActions", () => {
   describe("initialData", () => {
     it("record", async () => {
       const item = { name: "Fifi", type: "dog" }
-      const { result } = renderHook(() => useRestRecordActions<Pet>("pets", undefined, item))
+      const { result } = renderHook(() => useRestRecordActions<Pet>(undefined, item))
       const [state] = result.current
       expect(state.data).toEqual(item)
     })
@@ -80,7 +83,7 @@ describe("useRestRecordActions", () => {
       const item = { name: "Fifi", type: "dog" }
       const updatedItem = { ...item, name: "Fififi" }
 
-      const { result } = renderHook(() => useRestRecordActions<Pet>("pets", undefined, item))
+      const { result } = renderHook(() => useRestRecordActions<Pet>(undefined, item))
 
       const [, { updateState }] = result.current
       await act(async () => await updateState(updatedItem))
