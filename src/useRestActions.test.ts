@@ -202,26 +202,6 @@ describe("useRestActions", () => {
   })
 
   describe("config", () => {
-    it("url", async () => {
-      const id = 4
-      const { result } = renderHook(() => useRestActions<Pet>({
-        api: {
-          ...api,
-          url: `${ domain }pets/detail/${ id }/`
-        }
-      }))
-
-      const item = { id, name: "Fifi", type: "dog" }
-
-      nock(domain)
-        .get(`/pets/detail/${ id }/`)
-        .reply(200, item)
-      const [, { read }] = result.current
-      await act(async () => await read(id))
-
-      const [state] = result.current
-      expect(state.data).toEqual([item])
-    })
 
     it("mapResponse", async () => {
       const { result } = renderHook(() => useRestActions<Pet>({

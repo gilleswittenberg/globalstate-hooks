@@ -71,7 +71,6 @@ declare type APIConfig = {
   name?: Path
   suffix?: Path
   params?: QueryParams
-  url?: RequestURL
 }
 declare type Config = {
   api: APIConfig
