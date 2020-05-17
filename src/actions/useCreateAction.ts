@@ -81,7 +81,7 @@ export default <
     } else if (result !== undefined) {
       (handleSuccess as (result: Json) => void)(result)
     } else if (id !== undefined) {
-      (handleSuccess as (id: Id) => void)(id)
+      (handleSuccess as (id: Id | KeyPath) => void)(id)
     } else {
       (handleSuccess as () => void)()
     }
