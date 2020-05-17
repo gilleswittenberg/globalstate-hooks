@@ -282,6 +282,28 @@ describe("useRestActions", () => {
     })
   })
 
+  describe("sub config", () => {
+
+    it("api", async () => {
+      const { result } = renderHook(() => useRestActions<Pet>({ index: { api } }))
+
+      nock(domain)
+        .get("/pets/")
+        .reply(200, [
+          { name: "Fifi", type: "dog" },
+          { name: "Milo", type: "cat" }
+        ])
+      const [, { index }] = result.current
+      await act(async () => await index())
+
+      const [state] = result.current
+      expect(state.data).toEqual([
+        { name: "Fifi", type: "dog" },
+        { name: "Milo", type: "cat" }
+      ])
+    })
+  })
+
   describe("local", () => {
 
     it("create", async () => {

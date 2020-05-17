@@ -73,7 +73,7 @@ declare type APIConfig = {
   params?: QueryParams
   additionalHeaders?: RequestHeaders
 }
-declare type Config = {
+declare type BaseConfig = {
   api?: APIConfig
   mapResponse: MapResponse
   mapBody: MapBody
@@ -82,6 +82,14 @@ declare type Config = {
   afterSuccess: AfterMethod
   afterFailure: AfterMethod
 }
+declare type SubConfig = {
+  index?: Partial<BaseConfig>
+  create?: Partial<BaseConfig>
+  read?: Partial<BaseConfig>
+  update?: Partial<BaseConfig>
+  del?: Partial<BaseConfig>
+}
+declare type Config = BaseConfig & SubConfig
 
 // State
 declare type BaseState<Data = any> = {

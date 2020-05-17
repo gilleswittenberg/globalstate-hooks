@@ -1,12 +1,12 @@
 import useRestReducer from "./useRestReducer"
-import createConfig from "./config/createConfig"
+import mergeConfig from "./config/mergeConfig"
 import useCreateAction from "./actions/useCreateAction"
 import identify from "./utils/identify"
+import shouldMakeRequest from "./utils/shouldMakeRequest"
 
 const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, initialData?: Schema[]) => {
 
-  const config = createConfig(conf)
-  const makeRequest = config.api !== undefined
+  const config = mergeConfig(conf)
 
   const [
     state,
@@ -18,19 +18,22 @@ const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, in
     const { createSetItems } = actionCreators
     dispatch(createSetItems(result))
   }
-  const index = useCreateAction<Schema>(handleSuccessIndex as HandleSuccess<Schema>, makeRequest ? "GET" : undefined, config, actionCreators, dispatch)
+  const indexConfig = mergeConfig(config.index, config)
+  const index = useCreateAction<Schema>(handleSuccessIndex as HandleSuccess<Schema>, shouldMakeRequest(indexConfig) ? "GET" : undefined, indexConfig, actionCreators, dispatch)
 
   const handleSuccessCreate = (result: Schema) => {
     const { createAddItem } = actionCreators
     dispatch(createAddItem(result))
   }
-  const create = useCreateAction<Schema>(handleSuccessCreate as HandleSuccess<Schema>, makeRequest ? "POST" : undefined, config, actionCreators, dispatch)
+  const createConfig = mergeConfig(config.create, config)
+  const create = useCreateAction<Schema>(handleSuccessCreate as HandleSuccess<Schema>, shouldMakeRequest(createConfig) ? "POST" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessRead = (result: Schema) => {
     const { createAddItem } = actionCreators
     dispatch(createAddItem(result))
   }
-  const read = useCreateAction<Schema>(handleSuccessRead as HandleSuccess<Schema>, makeRequest ? "GET" : undefined, config, actionCreators, dispatch)
+  const readConfig = mergeConfig(config.read, config)
+  const read = useCreateAction<Schema>(handleSuccessRead as HandleSuccess<Schema>, shouldMakeRequest(readConfig) ? "GET" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessUpdate = (result: Schema, id: Id) => {
     const { createUpdateItem, createAddItem } = actionCreators
@@ -41,7 +44,8 @@ const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, in
       dispatch(createAddItem(result))
     }
   }
-  const update = useCreateAction<Schema>(handleSuccessUpdate as HandleSuccess<Schema>, makeRequest ? "PUT" : undefined, config, actionCreators, dispatch)
+  const updateConfig = mergeConfig(config.update, config)
+  const update = useCreateAction<Schema>(handleSuccessUpdate as HandleSuccess<Schema>, shouldMakeRequest(updateConfig) ? "PUT" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessDelete = (id: Id) => {
     const { createRemoveItem } = actionCreators
@@ -50,7 +54,8 @@ const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, in
       dispatch(createRemoveItem(index))
     }
   }
-  const del = useCreateAction<Schema>(handleSuccessDelete as HandleSuccess<Schema>, makeRequest ? "DELETE" : undefined, config, actionCreators, dispatch)
+  const delConfig = mergeConfig(config.del, config)
+  const del = useCreateAction<Schema>(handleSuccessDelete as HandleSuccess<Schema>, shouldMakeRequest(delConfig) ? "DELETE" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessClear = () => {
     const { createClear } = actionCreators

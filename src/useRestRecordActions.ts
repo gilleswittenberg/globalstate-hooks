@@ -1,11 +1,11 @@
 import { useRestRecordReducer, RecordAction } from "./useRestReducer"
-import createConfig from "./config/createConfig"
+import mergeConfig from "./config/mergeConfig"
 import useCreateAction from "./actions/useCreateAction"
+import shouldMakeRequest from "./utils/shouldMakeRequest"
 
 const useRestRecordActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, initialData?: Schema) => {
 
-  const config = createConfig(conf)
-  const makeRequest = config.api !== undefined
+  const config = mergeConfig(conf)
 
   const [
     state,
@@ -17,13 +17,15 @@ const useRestRecordActions = <Schema extends DefaultSchema>(conf?: Partial<Confi
     const { createSetData } = actionCreators
     dispatch(createSetData(result))
   }
-  const index = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessIndex as HandleSuccess<Schema>, makeRequest ? "GET" : undefined, config, actionCreators, dispatch)
+  const indexConfig = mergeConfig(config.index, config)
+  const index = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessIndex as HandleSuccess<Schema>, shouldMakeRequest(indexConfig) ? "GET" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessUpdate = (result: Schema) => {
     const { createSetData } = actionCreators
     dispatch(createSetData(result))
   }
-  const update = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessUpdate as HandleSuccess<Schema>, makeRequest ? "POST" : undefined, config, actionCreators, dispatch)
+  const updateConfig = mergeConfig(config.update, config)
+  const update = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessUpdate as HandleSuccess<Schema>, shouldMakeRequest(updateConfig) ? "POST" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessClear = () => {
     const { createClear } = actionCreators

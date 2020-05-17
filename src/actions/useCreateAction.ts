@@ -2,8 +2,8 @@ import { Dispatch, useCallback } from "react"
 import handleInvalid from "../utils/handleInvalid"
 import { ActionCreators, ItemsAction, RecordAction } from "../useRestReducer"
 import createUrl from "../config/createUrl"
-import useMethods from "../methods/useMethods"
-import createConfig from "../config/createConfig"
+import createMethods from "../methods/createMethods"
+import mergeConfig from "../config/mergeConfig"
 
 export default <
   Schema extends DefaultSchema,
@@ -16,15 +16,13 @@ export default <
   actionCreators: ActionCreators,
   dispatch: Dispatch<Action>
 ) => {
-  const { api: { additionalHeaders } = {} } = config
-  const methods = useMethods(additionalHeaders)
 
   type MakeRequestOverload = {
-    (method: "GET" | "DELETE", url: RequestURL): Promise<ResolvedRequest>
-    (method: "POST" | "PUT" | "PATCH", url: RequestURL, data: Json): Promise<ResolvedRequest>
+    (method: "GET" | "DELETE", url: RequestURL, additionalHeaders?: RequestHeaders): Promise<ResolvedRequest>
+    (method: "POST" | "PUT" | "PATCH", url: RequestURL, additionalHeaders: RequestHeaders | undefined, data: Json): Promise<ResolvedRequest>
   }
 
-  const makeRequest: MakeRequestOverload = async (method: Method, url: RequestURL, data: Json = null) => {
+  const makeRequest: MakeRequestOverload = async (method: Method, url: RequestURL, additionalHeaders: RequestHeaders | undefined, data: Json = null) => {
     const {
       createStartGetting,
       createStopGetting,
@@ -39,7 +37,7 @@ export default <
       createAddRequest
     } = actionCreators
 
-    const { get, post, put, patch, del } = methods
+    const { get, post, put, patch, del } = createMethods(additionalHeaders)
 
     switch (method) {
       case "GET": dispatch(createStartGetting() as Action); break
@@ -109,17 +107,18 @@ export default <
     const id: OId = isId(a) ? a : undefined
     const data: Schema | undefined = b !== undefined ? b : a !== undefined && !isId(a) ? a : undefined
 
-    const { api, mapResponse, mapBody, validate, invalidHandling, afterSuccess, afterFailure } = createConfig(conf, config)
+    const { api, mapResponse, mapBody, validate, invalidHandling, afterSuccess, afterFailure } = mergeConfig(conf, config)
 
     if (api === undefined) return
 
     // REST request
     const url = createUrl(api, id)
+    const { additionalHeaders } = api
     const mappedData = mapBody(data)
     const request =
       method === "GET" || method === "DELETE" ?
-        await makeRequest(method, url) :
-        await makeRequest(method, url, mappedData)
+        await makeRequest(method, url, additionalHeaders) :
+        await makeRequest(method, url, additionalHeaders, mappedData)
     if (request.ok) {
       const result = mapResponse(request.result)
       if (handleInvalid(result, validate(result), invalidHandling)) return
