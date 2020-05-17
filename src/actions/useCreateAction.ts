@@ -16,7 +16,7 @@ export default <
   actionCreators: ActionCreators,
   dispatch: Dispatch<Action>
 ) => {
-  const { additionalHeaders } = config
+  const { api: { additionalHeaders } = {} } = config
   const methods = useMethods(additionalHeaders)
 
   type MakeRequestOverload = {

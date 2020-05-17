@@ -6,7 +6,6 @@ const afterMethod = () => {} // eslint-disable-line @typescript-eslint/no-empty-
 
 const defaultConfig: Config = {
   api: undefined,
-  additionalHeaders: {},
   mapResponse,
   mapBody,
   validate,

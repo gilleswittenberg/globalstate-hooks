@@ -71,10 +71,10 @@ declare type APIConfig = {
   name?: Path
   suffix?: Path
   params?: QueryParams
+  additionalHeaders?: RequestHeaders
 }
 declare type Config = {
   api?: APIConfig
-  additionalHeaders: RequestHeaders
   mapResponse: MapResponse
   mapBody: MapBody
   validate: Validate
