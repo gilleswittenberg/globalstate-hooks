@@ -106,12 +106,10 @@ declare type RecordState<Schema extends DefaultSchema> = ComputedState<Schema>
 declare type ItemsState<Schema extends DefaultSchema> = ComputedState<Plural<Schema>>
 
 // Handle success
-// @TODO: Can we use function overloading here?
-declare type HandleSuccess = any
-/*
-  | (() => void)
-  | ((result: JsonObject) => void)
-  | ((result: Json) => void)
-  | ((result: Json, id: Id) => void)
-  | ((data: Json, path: KeyPath) => void)
-*/
+declare type HandleSuccess<Schema extends DefaultSchema> = {
+  () : void;
+  (id: Id | KeyPath) : void;
+  (result: Schema) : void;
+  (result: Schema[]) : void;
+  (result: Schema, id: Id | KeyPath) : void;
+}

@@ -18,19 +18,19 @@ const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, in
     const { createSetItems } = actionCreators
     dispatch(createSetItems(result))
   }
-  const index = useCreateAction<Schema>(handleSuccessIndex, makeRequest ? "GET" : undefined, config, actionCreators, dispatch)
+  const index = useCreateAction<Schema>(handleSuccessIndex as HandleSuccess<Schema>, makeRequest ? "GET" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessCreate = (result: Schema) => {
     const { createAddItem } = actionCreators
     dispatch(createAddItem(result))
   }
-  const create = useCreateAction<Schema>(handleSuccessCreate, makeRequest ? "POST" : undefined, config, actionCreators, dispatch)
+  const create = useCreateAction<Schema>(handleSuccessCreate as HandleSuccess<Schema>, makeRequest ? "POST" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessRead = (result: Schema) => {
     const { createAddItem } = actionCreators
     dispatch(createAddItem(result))
   }
-  const read = useCreateAction<Schema>(handleSuccessRead, makeRequest ? "GET" : undefined, config, actionCreators, dispatch)
+  const read = useCreateAction<Schema>(handleSuccessRead as HandleSuccess<Schema>, makeRequest ? "GET" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessUpdate = (result: Schema, id: Id) => {
     const { createUpdateItem, createAddItem } = actionCreators
@@ -41,7 +41,7 @@ const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, in
       dispatch(createAddItem(result))
     }
   }
-  const update = useCreateAction<Schema>(handleSuccessUpdate, makeRequest ? "PUT" : undefined, config, actionCreators, dispatch)
+  const update = useCreateAction<Schema>(handleSuccessUpdate as HandleSuccess<Schema>, makeRequest ? "PUT" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessDelete = (id: Id) => {
     const { createRemoveItem } = actionCreators
@@ -50,13 +50,13 @@ const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, in
       dispatch(createRemoveItem(index))
     }
   }
-  const del = useCreateAction<Schema>(handleSuccessDelete, makeRequest ? "DELETE" : undefined, config, actionCreators, dispatch)
+  const del = useCreateAction<Schema>(handleSuccessDelete as HandleSuccess<Schema>, makeRequest ? "DELETE" : undefined, config, actionCreators, dispatch)
 
   const handleSuccessClear = () => {
     const { createClear } = actionCreators
     dispatch(createClear())
   }
-  const clear = useCreateAction<Schema>(handleSuccessClear, undefined, config, actionCreators, dispatch)
+  const clear = useCreateAction<Schema>(handleSuccessClear as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
 
   const handleSuccessUpdateState = (result: Schema, id: Id) => {
     const { createUpdateItem } = actionCreators
@@ -64,13 +64,13 @@ const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, in
     if (index === -1) return
     dispatch(createUpdateItem(index, result))
   }
-  const updateState = useCreateAction<Schema>(handleSuccessUpdateState, undefined, config, actionCreators, dispatch)
+  const updateState = useCreateAction<Schema>(handleSuccessUpdateState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
 
   const handleSuccessUpdatePartialState = (data: Schema[], path: KeyPath) => {
     const { createUpdatePartial } = actionCreators
     dispatch(createUpdatePartial(path, data))
   }
-  const updatePartialState = useCreateAction<Schema>(handleSuccessUpdatePartialState, undefined, config, actionCreators, dispatch)
+  const updatePartialState = useCreateAction<Schema>(handleSuccessUpdatePartialState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
 
   return [state, { index, create, read, update, del, clear, updateState, updatePartialState }] as const
 }

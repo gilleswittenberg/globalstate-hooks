@@ -10,7 +10,7 @@ export default <
   Action extends ItemsAction<Schema> | RecordAction<Schema> = ItemsAction<Schema>,
   State extends ItemsState<Schema> | RecordState<Schema> = ItemsState<Schema>
 >(
-  handleSuccess: HandleSuccess,
+  handleSuccess: HandleSuccess<Schema>,
   method: Method | undefined,
   config: Config,
   actionCreators: ActionCreators,
@@ -69,13 +69,7 @@ export default <
     return resolvedRequest
   }
 
-  type DoHandleSuccessOverload = {
-    (): void
-    (a: Json, id: Id | KeyPath): void
-    (a: undefined, id: Id): void
-    (a: Json): void
-  }
-  const doHandleSuccess: DoHandleSuccessOverload = (result?: Json, id?: Id | KeyPath) => {
+  const doHandleSuccess = (result?: Json, id?: Id | KeyPath) => {
     if (result !== undefined && id !== undefined) {
       (handleSuccess as (result: Json, id: Id | KeyPath) => void)(result, id)
     } else if (result !== undefined) {
@@ -95,14 +89,8 @@ export default <
   }
   const retLocal: ReturnLocalOverload = async (a?: Id | KeyPath | Schema | Json, b?: Schema | Json) => {
     const bb = b !== undefined ? b : a
-    const aa = b !== undefined ? a : undefined
-    if (bb !== undefined && aa !== undefined) {
-      doHandleSuccess(bb, aa as Id | KeyPath)
-    } else if (bb !== undefined) {
-      doHandleSuccess(bb)
-    } else {
-      doHandleSuccess()
-    }
+    const aa = b !== undefined ? a as Id | KeyPath : undefined
+    doHandleSuccess(bb, aa)
   }
 
   type ReturnOverload = {
@@ -135,15 +123,7 @@ export default <
     if (request.ok) {
       const result = mapResponse(request.result)
       if (handleInvalid(result, validate(result), invalidHandling)) return
-      if (result !== undefined && id !== undefined) {
-        doHandleSuccess(result, id)
-      } else if (result !== undefined) {
-        doHandleSuccess(result)
-      } else if (id !== undefined) {
-        doHandleSuccess(undefined, id)
-      } else {
-        doHandleSuccess()
-      }
+      doHandleSuccess(result, id)
       // @TODO: Pass result, id, config
       afterSuccess(request)
     } else {
