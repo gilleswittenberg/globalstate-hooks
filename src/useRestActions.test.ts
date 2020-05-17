@@ -206,7 +206,7 @@ describe("useRestActions", () => {
     it("mapResponse", async () => {
       const { result } = renderHook(() => useRestActions<Pet>({
         api,
-        mapResponse: (response: any) => response.results
+        mapResponse: (response: any) => response.results // eslint-disable-line @typescript-eslint/no-explicit-any
       }))
 
       nock(domain)
@@ -231,7 +231,7 @@ describe("useRestActions", () => {
     it("mapBody", async () => {
       const { result } = renderHook(() => useRestActions<Pet>({
         api,
-        mapBody: (body: any) => ({ ...body, extra: "Extra" })
+        mapBody: (body: any) => ({ ...body, extra: "Extra" }) // eslint-disable-line @typescript-eslint/no-explicit-any
       }))
 
       const id = 3

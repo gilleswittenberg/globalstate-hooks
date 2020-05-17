@@ -92,6 +92,7 @@ declare type SubConfig = {
 declare type Config = BaseConfig & SubConfig
 
 // State
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare type BaseState<Data = any> = {
   isGetting: boolean
   isPosting: boolean
@@ -101,6 +102,7 @@ declare type BaseState<Data = any> = {
   data: undefined | Data
   requests: ResolvedRequests
 }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare type ComputedState<Data = any> = BaseState<Data> & {
   isFetching: boolean
   isUpdating: boolean
