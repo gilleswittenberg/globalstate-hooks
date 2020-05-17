@@ -1,9 +1,10 @@
 import { useRestRecordReducer, RecordAction } from "./useRestReducer"
-import useConfig from "./config/useConfig"
+import createConfig from "./config/createConfig"
 import useCreateAction from "./actions/useCreateAction"
 
 const useRestRecordActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, initialData?: Schema) => {
-  const config = useConfig(conf)
+
+  const config = createConfig(conf)
   const makeRequest = config.local === false
 
   const [
