@@ -123,6 +123,8 @@ export default <
 
     const { api, mapResponse, mapBody, validate, invalidHandling, afterSuccess, afterFailure } = createConfig(conf, config)
 
+    if (api === undefined) return
+
     // REST request
     const url = createUrl(api, id)
     const mappedData = mapBody(data)

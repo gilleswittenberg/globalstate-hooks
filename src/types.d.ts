@@ -73,8 +73,7 @@ declare type APIConfig = {
   params?: QueryParams
 }
 declare type Config = {
-  api: APIConfig
-  local: boolean
+  api?: APIConfig
   additionalHeaders: RequestHeaders
   mapResponse: MapResponse
   mapBody: MapBody

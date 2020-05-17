@@ -288,7 +288,7 @@ describe("useRestActions", () => {
 
       const item = { name: "Fifi", type: "dog" }
 
-      const { result } = renderHook(() => useRestActions<Pet>({ api, local: true }))
+      const { result } = renderHook(() => useRestActions<Pet>())
       const [, { create }] = result.current
       await act(async () => await create(item))
 
@@ -302,7 +302,7 @@ describe("useRestActions", () => {
       const item1 = { name: "Fifi", type: "dog" }
       const updatedItem1 = { ...item1, name: "Fififi" }
 
-      const { result } = renderHook(() => useRestActions<Pet>({ api, local: true }, [item, item1]))
+      const { result } = renderHook(() => useRestActions<Pet>(undefined, [item, item1]))
       const [, { update }] = result.current
       await act(async () => await update(1, updatedItem1))
 
@@ -315,7 +315,7 @@ describe("useRestActions", () => {
       const item = { name: "Mimi", type: "cat" }
       const item1 = { name: "Fifi", type: "dog" }
 
-      const { result } = renderHook(() => useRestActions<Pet>({ api, local: true }, [item, item1]))
+      const { result } = renderHook(() => useRestActions<Pet>(undefined, [item, item1]))
       const [, { del }] = result.current
       await act(async () => await del(0))
 

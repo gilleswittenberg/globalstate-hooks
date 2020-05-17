@@ -6,7 +6,7 @@ import identify from "./utils/identify"
 const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, initialData?: Schema[]) => {
 
   const config = createConfig(conf)
-  const makeRequest = config.local === false
+  const makeRequest = config.api !== undefined
 
   const [
     state,

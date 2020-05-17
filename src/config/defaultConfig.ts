@@ -5,10 +5,7 @@ import validate from "./validate"
 const afterMethod = () => {} // eslint-disable-line @typescript-eslint/no-empty-function
 
 const defaultConfig: Config = {
-  api: {
-    domain: "http://localhost/"
-  },
-  local: false,
+  api: undefined,
   additionalHeaders: {},
   mapResponse,
   mapBody,

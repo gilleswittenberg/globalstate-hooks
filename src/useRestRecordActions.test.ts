@@ -60,7 +60,7 @@ describe("useRestRecordActions", () => {
 
       const item = { name: "Fifi", type: "dog" }
 
-      const { result } = renderHook(() => useRestRecordActions<Pet>({ api, local: true }))
+      const { result } = renderHook(() => useRestRecordActions<Pet>())
       const [, { update }] = result.current
       await act(async () => await update(item))
 
