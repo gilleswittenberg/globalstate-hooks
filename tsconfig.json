@@ -6,8 +6,11 @@
       "es2017.object"
     ],
     "target": "es5",
-    "module": "commonjs",
-    "esModuleInterop": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "module": "esnext",
+    "noEmitOnError": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true
   },
