@@ -1,3 +1,16 @@
+export type RequestHeaders = Record<string, string>
+export type ResolvedRequest = {
+  url: RequestURL
+  method: Method
+  headers: RequestHeaders
+  body?: RequestBody
+  ok: boolean
+  status: Status
+  response: Response
+  result: OResult
+  errorMessage: OErrorMessage
+}
+
 const getHeaders = (additionalHeaders: RequestHeaders = {}): RequestHeaders => ({
   "Content-Type": "application/json",
   ...additionalHeaders
