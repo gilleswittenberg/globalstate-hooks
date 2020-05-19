@@ -3,13 +3,19 @@ const getHeaders = (additionalHeaders: RequestHeaders = {}): RequestHeaders => (
   ...additionalHeaders
 })
 
-const fetch = async (url: RequestURL, method: Method = "GET", additionalHeaders: RequestHeaders = {}, body?: RequestBody, parseResponse = true): Promise<ResolvedRequest> => {
+const parseResponse = async (response: Response): Promise<Result> => {
+  const text = await response.text()
+  try { return JSON.parse(text) } catch (err) {}
+  return text
+}
+
+const fetch = async (url: RequestURL, method: Method = "GET", additionalHeaders: RequestHeaders = {}, body?: RequestBody, shouldParseResponse = true): Promise<ResolvedRequest> => {
   const headers = getHeaders(additionalHeaders)
   const bodyString = body !== undefined ? JSON.stringify(body) : undefined
   const response = await window.fetch(url, { method, headers, body: bodyString })
   const ok = response.ok
   const status = response.status
-  const result = response.ok && parseResponse ? await response.json() : undefined
+  const result = response.ok && shouldParseResponse ? await parseResponse(response) : undefined
   const errorMessage = !response.ok ? await response.json() : undefined
   return {
     url,

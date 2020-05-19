@@ -24,6 +24,19 @@ describe("useRestRecordActions", () => {
         const [state] = result.current
         expect(state.data).toEqual({ name: "Fifi", type: "dog" })
       })
+
+      it("simple value", async () => {
+        const { result } = renderHook(() => useRestRecordActions<string>(config))
+
+        nock(domain)
+          .get("/pet/")
+          .reply(200, "Fifi")
+        const [, { index }] = result.current
+        await act(async () => await index())
+
+        const [state] = result.current
+        expect(state.data).toEqual("Fifi")
+      })
     })
 
     describe("update", () => {
@@ -51,6 +64,20 @@ describe("useRestRecordActions", () => {
         const [state1] = result.current
         expect(state1.data).toEqual(updatedItem)
       })
+
+      it("simple value", async () => {
+        const { result } = renderHook(() => useRestRecordActions<string>(config, "Fifi"))
+
+        nock(domain)
+          .post("/pet/")
+          .reply(200, "Fififi")
+        const [, { update }] = result.current
+        await act(async () => await update())
+
+        const [state] = result.current
+        expect(state.data).toEqual("Fififi")
+      })
+
     })
   })
 

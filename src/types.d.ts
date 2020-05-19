@@ -111,7 +111,7 @@ declare type ComputedState<Data = any> = BaseState<Data> & {
   errorMessage: ErrorMessage | undefined
   hasError: boolean
 }
-declare type DefaultSchema = JsonObject
+declare type DefaultSchema = Json
 declare type RecordState<Schema extends DefaultSchema> = ComputedState<Schema>
 declare type ItemsState<Schema extends DefaultSchema> = ComputedState<Plural<Schema>>
 

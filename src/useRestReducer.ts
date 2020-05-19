@@ -1,5 +1,6 @@
 import { useReducer } from "react"
 import produce from "immer"
+import isSimpleValue from "./utils/isSimpleValue"
 
 export type Action =
   | { type: "SET_IS_GETTING", payload: { isGetting: boolean } }
@@ -203,7 +204,7 @@ export const recordReducer = <Schema extends DefaultSchema>(state: RecordState<S
       const { data: prevData = {} } = state
       // @TODO: Delete keys
       // @TODO: Deep merge
-      const nextData = { ...prevData, ...data }
+      const nextData = isSimpleValue(data) || isSimpleValue(prevData) ? data : { ...prevData as JsonObject, ...data as Partial<JsonObject> }
       return computeState<RecordState<Schema>>({ ...state, data: nextData } as RecordState<Schema>)
     }
     case "UPDATE_PARTIAL": {

@@ -46,6 +46,20 @@ describe("useRestActions", () => {
       const [state] = result.current
       expect(state.data).toBeUndefined()
     })
+
+    it("simple values", async () => {
+      const strings = ["Fifi", "Milo"]
+      const { result } = renderHook(() => useRestActions<string>(config))
+
+      nock(domain)
+        .get("/pets/")
+        .reply(200, strings)
+      const [, { index }] = result.current
+      await act(async () => await index())
+
+      const [state] = result.current
+      expect(state.data).toEqual(strings)
+    })
   })
 
   describe("create", () => {
