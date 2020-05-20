@@ -1,6 +1,40 @@
+import type { Optional } from "./types/Optional"
+import type { Plural } from "./types/Plural"
+import type { Json, JsonObject } from "./types/Json"
+import type { ErrorMessage, ErrorMessages } from "./types/ErrorMessage"
+import type { ResolvedRequest, ResolvedRequests } from "./methods/fetch"
 import { useReducer } from "react"
 import produce from "immer"
 import isSimpleValue from "./utils/isSimpleValue"
+
+export type Index = number
+export type Id = number | string
+export type OId = Optional<Id>
+export type Key = string
+export type KeyPath = Plural<Key | Index>
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type BaseState<Data = any> = {
+  isGetting: boolean
+  isPosting: boolean
+  isPutting: boolean
+  isPatching: boolean
+  isDeleting: boolean
+  data: undefined | Data
+  requests: ResolvedRequests
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ComputedState<Data = any> = BaseState<Data> & {
+  isFetching: boolean
+  isUpdating: boolean
+  isInitialized: boolean
+  errorMessages: ErrorMessages
+  errorMessage: ErrorMessage | undefined
+  hasError: boolean
+}
+export type DefaultSchema = Json
+export type RecordState<Schema extends DefaultSchema> = ComputedState<Schema>
+export type ItemsState<Schema extends DefaultSchema> = ComputedState<Plural<Schema>>
 
 export type Action =
   | { type: "SET_IS_GETTING", payload: { isGetting: boolean } }

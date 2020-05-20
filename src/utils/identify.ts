@@ -1,3 +1,4 @@
+import { Id, Index } from "../useRestReducer"
 type Identifiable = { id?: Id }
 export default <Schema>(items: Schema[] | undefined, id: Id | Index): Index => {
   if (items === undefined) return -1

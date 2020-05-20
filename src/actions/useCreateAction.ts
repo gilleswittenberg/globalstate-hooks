@@ -1,9 +1,21 @@
+import type { ActionCreators, ItemsAction, RecordAction } from "../useRestReducer"
+import type { Json } from "../types/Json"
+import type { Id, OId, KeyPath, DefaultSchema, ItemsState, RecordState } from "../useRestReducer"
+import type { Method, RequestURL, RequestHeaders, ResolvedRequest } from "../methods/fetch"
+import type { Config } from "../config/config"
 import { Dispatch, useCallback } from "react"
-import handleInvalid from "../utils/handleInvalid"
-import { ActionCreators, ItemsAction, RecordAction } from "../useRestReducer"
 import createUrl from "../config/createUrl"
 import createMethods from "../methods/createMethods"
 import mergeConfig from "../config/mergeConfig"
+import handleInvalid from "../utils/handleInvalid"
+
+export type HandleSuccess<Schema extends DefaultSchema> = {
+  () : void;
+  (id: Id | KeyPath) : void;
+  (result: Schema) : void;
+  (result: Schema[]) : void;
+  (result: Schema, id: Id | KeyPath) : void;
+}
 
 export default <
   Schema extends DefaultSchema,

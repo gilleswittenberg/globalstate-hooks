@@ -1,3 +1,7 @@
+import type { Id, KeyPath } from "./useRestReducer"
+import type { DefaultSchema } from "./useRestReducer"
+import type { HandleSuccess } from "./actions/useCreateAction"
+import type { Config } from "./config/config"
 import useRestReducer from "./useRestReducer"
 import mergeConfig from "./config/mergeConfig"
 import useCreateAction from "./actions/useCreateAction"

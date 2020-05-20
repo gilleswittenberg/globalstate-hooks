@@ -1,8 +1,7 @@
 import useRestActions from "./useRestActions"
 import useRestRecordActions from "./useRestRecordActions"
-import { RequestHeaders, ResolvedRequest } from "./methods/fetch"
+import type { ResolvedRequest } from "./methods/fetch"
 
 export { useRestActions }
 export { useRestRecordActions }
-export { RequestHeaders }
-export { ResolvedRequest }
+export type { ResolvedRequest }

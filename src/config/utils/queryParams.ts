@@ -1,3 +1,5 @@
+export type QueryParams = Record<string, string | number>
+
 const esc = encodeURIComponent
 export default (params?: QueryParams): string => {
   const entries = Object.entries(params ?? {})

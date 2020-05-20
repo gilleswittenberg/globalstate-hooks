@@ -1,4 +1,24 @@
+import type { Optional } from "../types/Optional"
+import type { Json } from "../types/Json"
+import type { OErrorMessage } from "../types/ErrorMessage"
+
+export type Domain = string
+export type Path = string
+export type RequestURL = string
+export type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
+export type MethodHandlers = {
+  get: (url: RequestURL) => Promise<ResolvedRequest>
+  post: (url: RequestURL, body: RequestBody) => Promise<ResolvedRequest>
+  put: (url: RequestURL, body: RequestBody) => Promise<ResolvedRequest>
+  patch: (url: RequestURL, body: RequestBody) => Promise<ResolvedRequest>
+  del: (url: RequestURL) => Promise<ResolvedRequest>
+}
 export type RequestHeaders = Record<string, string>
+export type RequestBody = Json
+export type Status = number
+export type Result = Json
+export type OResult = Optional<Result>
+
 export type ResolvedRequest = {
   url: RequestURL
   method: Method
@@ -10,6 +30,8 @@ export type ResolvedRequest = {
   result: OResult
   errorMessage: OErrorMessage
 }
+
+export type ResolvedRequests = ResolvedRequest[]
 
 const getHeaders = (additionalHeaders: RequestHeaders = {}): RequestHeaders => ({
   "Content-Type": "application/json",

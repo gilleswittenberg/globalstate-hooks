@@ -1,4 +1,6 @@
-import { useRestRecordReducer, RecordAction } from "./useRestReducer"
+import type { Config } from "./config/config"
+import type { HandleSuccess } from "./actions/useCreateAction"
+import { useRestRecordReducer, KeyPath, RecordState, DefaultSchema, RecordAction } from "./useRestReducer"
 import mergeConfig from "./config/mergeConfig"
 import useCreateAction from "./actions/useCreateAction"
 import shouldMakeRequest from "./utils/shouldMakeRequest"
