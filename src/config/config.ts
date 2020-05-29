@@ -5,8 +5,8 @@ import type { Json } from "../types/Json"
 import type { Domain, Path, RequestHeaders, ResolvedRequest } from "../methods/fetch"
 import type { QueryParams } from "../methods/queryParams"
 
-type MapResponse = (result?: Json) => Json | undefined
-type MapBody = (body?: Json) => Json
+type MapResponse = (response: unknown) => unknown
+type MapBody = (body: unknown) => unknown
 type Validate = (result?: Json) => boolean
 export type InvalidHandling = "silent" | "warn" | "abort"
 type AfterMethod = (request: ResolvedRequest) => void

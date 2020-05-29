@@ -130,9 +130,9 @@ export default <
     const request =
       method === "GET" || method === "DELETE" ?
         await makeRequest(method, url, additionalHeaders) :
-        await makeRequest(method, url, additionalHeaders, mappedData)
+        await makeRequest(method, url, additionalHeaders, mappedData as Schema)
     if (request.ok) {
-      const result = mapResponse(request.result)
+      const result = mapResponse(request.result) as Schema
       if (handleInvalid(result, validate(result), invalidHandling)) return
       doHandleSuccess(result, id)
       // @TODO: Pass result, id, config

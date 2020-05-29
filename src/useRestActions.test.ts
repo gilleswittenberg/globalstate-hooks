@@ -7,6 +7,7 @@ const name = "pets"
 const api = { domain, name }
 const config = { api }
 type Pet = { name: string, type: string }
+type Pets = Pet[]
 
 describe("useRestActions", () => {
   describe("index", () => {
@@ -220,7 +221,7 @@ describe("useRestActions", () => {
     it("mapResponse", async () => {
       const { result } = renderHook(() => useRestActions<Pet>({
         api,
-        mapResponse: (response: any) => response.results // eslint-disable-line @typescript-eslint/no-explicit-any
+        mapResponse: (response: unknown) => (response as { results: Pets }).results
       }))
 
       nock(domain)
@@ -245,7 +246,7 @@ describe("useRestActions", () => {
     it("mapBody", async () => {
       const { result } = renderHook(() => useRestActions<Pet>({
         api,
-        mapBody: (body: any) => ({ ...body, extra: "Extra" }) // eslint-disable-line @typescript-eslint/no-explicit-any
+        mapBody: (body: unknown) => ({ ...body as Pet, extra: "Extra" })
       }))
 
       const id = 3
