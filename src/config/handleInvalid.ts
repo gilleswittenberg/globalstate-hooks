@@ -1,4 +1,4 @@
-import type { InvalidHandling } from "../config/config"
+import type { InvalidHandling } from "./config"
 
 // returns a boolean that indicates if the caller should abort
 export default (result: unknown, isValid: boolean, invalidHandling: InvalidHandling) => {

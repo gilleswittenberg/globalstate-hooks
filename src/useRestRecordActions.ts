@@ -3,7 +3,7 @@ import type { HandleSuccess } from "./actions/useCreateAction"
 import { useRestRecordReducer, KeyPath, RecordState, DefaultSchema, RecordAction } from "./useRestReducer"
 import mergeConfig from "./config/mergeConfig"
 import useCreateAction from "./actions/useCreateAction"
-import shouldMakeRequest from "./utils/shouldMakeRequest"
+import shouldMakeRequest from "./config/shouldMakeRequest"
 
 const useRestRecordActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, initialData?: Schema) => {
 

@@ -4,10 +4,10 @@ import type { Id, OId, KeyPath, DefaultSchema, ItemsState, RecordState } from ".
 import type { Method, RequestURL, RequestHeaders, ResolvedRequest } from "../methods/fetch"
 import type { Config } from "../config/config"
 import { Dispatch, useCallback } from "react"
-import createUrl from "../config/createUrl"
+import createUrl from "../methods/createUrl"
 import createMethods from "../methods/createMethods"
 import mergeConfig from "../config/mergeConfig"
-import handleInvalid from "../utils/handleInvalid"
+import handleInvalid from "../config/handleInvalid"
 
 export type HandleSuccess<Schema extends DefaultSchema> = {
   () : void;

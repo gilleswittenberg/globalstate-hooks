@@ -6,7 +6,7 @@ import useRestReducer from "./useRestReducer"
 import mergeConfig from "./config/mergeConfig"
 import useCreateAction from "./actions/useCreateAction"
 import identify from "./utils/identify"
-import shouldMakeRequest from "./utils/shouldMakeRequest"
+import shouldMakeRequest from "./config/shouldMakeRequest"
 
 const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, initialData?: Schema[]) => {
 

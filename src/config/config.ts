@@ -3,7 +3,7 @@ import mapBody from "./mapBody"
 import validate from "./validate"
 import type { Json } from "../types/Json"
 import type { Domain, Path, RequestHeaders, ResolvedRequest } from "../methods/fetch"
-import type { QueryParams } from "./utils/queryParams"
+import type { QueryParams } from "../methods/queryParams"
 
 type MapResponse = (result?: Json) => Json | undefined
 type MapBody = (body?: Json) => Json

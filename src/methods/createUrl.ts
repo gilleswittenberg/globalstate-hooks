@@ -1,7 +1,7 @@
 import type { Id } from "../useRestReducer"
-import type { APIConfig } from "./config"
-import type { RequestURL } from "../methods/fetch"
-import queryParams from "./utils/queryParams"
+import type { APIConfig } from "../config/config"
+import type { RequestURL } from "./fetch"
+import queryParams from "./queryParams"
 
 const appendSlash = (str: string): string => /\/$/.test(str) ? str : `${ str }/`
 
