@@ -1,6 +1,7 @@
 import type { ActionCreators, ItemsAction, RecordAction } from "../useRestReducer"
+import type { Optional } from "../types/Optional"
 import type { Json } from "../types/Json"
-import type { Id, OId, KeyPath, DefaultSchema, ItemsState, RecordState } from "../useRestReducer"
+import type { Id, OId, KeyPath, ItemsState, RecordState } from "../useRestReducer"
 import type { Method, RequestURL, RequestHeaders, ResolvedRequest } from "../methods/fetch"
 import type { Config } from "../config/config"
 import { Dispatch, useCallback } from "react"
@@ -9,7 +10,7 @@ import createMethods from "../methods/createMethods"
 import mergeConfig from "../config/mergeConfig"
 import handleInvalid from "../config/handleInvalid"
 
-export type HandleSuccess<Schema extends DefaultSchema> = {
+export type HandleSuccess<Schema> = {
   () : void;
   (id: Id | KeyPath) : void;
   (result: Schema) : void;
@@ -18,7 +19,7 @@ export type HandleSuccess<Schema extends DefaultSchema> = {
 }
 
 export default <
-  Schema extends DefaultSchema,
+  Schema,
   Action extends ItemsAction<Schema> | RecordAction<Schema> = ItemsAction<Schema>,
   State extends ItemsState<Schema> | RecordState<Schema> = ItemsState<Schema>
 >(
@@ -79,11 +80,11 @@ export default <
     return resolvedRequest
   }
 
-  const doHandleSuccess = (result?: Json, id?: Id | KeyPath) => {
+  const doHandleSuccess = (result?: Schema | Json, id?: Id | KeyPath) => {
     if (result !== undefined && id !== undefined) {
-      (handleSuccess as (result: Json, id: Id | KeyPath) => void)(result, id)
+      (handleSuccess as (result: Schema | Json, id: Id | KeyPath) => void)(result, id)
     } else if (result !== undefined) {
-      (handleSuccess as (result: Json) => void)(result)
+      (handleSuccess as (result: Schema | Json) => void)(result)
     } else if (id !== undefined) {
       (handleSuccess as (id: Id | KeyPath) => void)(id)
     } else {
@@ -93,14 +94,15 @@ export default <
 
   type ReturnLocalOverload = {
     (): void
-    (a: Schema | Json): void
-    (a: Id, b: Schema | Json): void
+    (a: Id): void
+    (a: Schema): void
+    (a: Id, b: Schema): void
     (a: KeyPath, b: Json): void
   }
-  const retLocal: ReturnLocalOverload = async (a?: Id | KeyPath | Schema | Json, b?: Schema | Json) => {
+  const retLocal: ReturnLocalOverload = async (a?: Id | KeyPath | Schema, b?: Schema | Json) => {
     const bb = b !== undefined ? b : a
     const aa = b !== undefined ? a as Id | KeyPath : undefined
-    doHandleSuccess(bb, aa)
+    doHandleSuccess(bb as Optional<Schema | Json>, aa as Optional<Id | KeyPath>)
   }
 
   type ReturnOverload = {
@@ -130,7 +132,7 @@ export default <
     const request =
       method === "GET" || method === "DELETE" ?
         await makeRequest(method, url, additionalHeaders) :
-        await makeRequest(method, url, additionalHeaders, mappedData as Schema)
+        await makeRequest(method, url, additionalHeaders, mappedData as Json)
     if (request.ok) {
       const result = mapResponse(request.result) as Schema
       if (handleInvalid(result, validate(result), invalidHandling)) return

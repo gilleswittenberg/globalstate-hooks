@@ -1,6 +1,6 @@
 import type { Optional } from "./types/Optional"
 import type { Plural } from "./types/Plural"
-import type { Json, JsonObject } from "./types/Json"
+import type { JsonObject } from "./types/Json"
 import type { ErrorMessage, ErrorMessages } from "./types/ErrorMessage"
 import type { ResolvedRequest, ResolvedRequests } from "./methods/fetch"
 import { useReducer } from "react"
@@ -14,17 +14,17 @@ export type Key = string
 export type KeyPath = Plural<Key | Index>
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type BaseState<Data = any> = {
+export type BaseState<Schema = any> = {
   isGetting: boolean
   isPosting: boolean
   isPutting: boolean
   isPatching: boolean
   isDeleting: boolean
-  data: undefined | Data
+  data: undefined | Schema
   requests: ResolvedRequests
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ComputedState<Data = any> = BaseState<Data> & {
+export type ComputedState<Schema = any> = BaseState<Schema> & {
   isFetching: boolean
   isUpdating: boolean
   isInitialized: boolean
@@ -32,9 +32,8 @@ export type ComputedState<Data = any> = BaseState<Data> & {
   errorMessage: ErrorMessage | undefined
   hasError: boolean
 }
-export type DefaultSchema = Json
-export type RecordState<Schema extends DefaultSchema> = ComputedState<Schema>
-export type ItemsState<Schema extends DefaultSchema> = ComputedState<Plural<Schema>>
+export type RecordState<Schema> = ComputedState<Schema>
+export type ItemsState<Schema> = ComputedState<Plural<Schema>>
 
 export type Action =
   | { type: "SET_IS_GETTING", payload: { isGetting: boolean } }
@@ -46,14 +45,14 @@ export type Action =
   | { type: "CLEAR" }
 
 type UpdatePartialRecordAction<Schema> = { type: "UPDATE_PARTIAL", payload: { path: KeyPath, data: Schema } }
-export type RecordAction<Schema extends DefaultSchema = DefaultSchema> =
+export type RecordAction<Schema> =
   | Action
   | UpdatePartialRecordAction<Schema>
   | { type: "SET_DATA", payload: { data: Schema } }
   | { type: "UPDATE_DATA", payload: { data: Partial<Schema> } }
 
 type UpdatePartialItemsAction<Schema> = { type: "UPDATE_PARTIAL", payload: { path: KeyPath, data: Schema[] } }
-export type ItemsAction<Schema extends DefaultSchema = DefaultSchema> =
+export type ItemsAction<Schema> =
   | Action
   | UpdatePartialItemsAction<Schema>
   | { type: "SET_ITEMS", payload: { items: Schema[] } }
@@ -61,7 +60,7 @@ export type ItemsAction<Schema extends DefaultSchema = DefaultSchema> =
   | { type: "UPDATE_ITEM", payload: { index: Index, item: Schema } }
   | { type: "REMOVE_ITEM", payload: { index: Index } }
 
-const computeState = <State extends BaseState = BaseState>(state: State): ComputedState => {
+const computeState = <State extends BaseState>(state: State): ComputedState => {
   const { isGetting, isPosting, isPutting, isPatching, isDeleting, data, requests } = state
   const isUpdating = isPosting || isPutting || isPatching || isDeleting
   const isFetching = isGetting || isUpdating
@@ -105,15 +104,15 @@ export const createStopDeleting = (): Action => ({ type: "SET_IS_DELETING", payl
 export const createAddRequest = (request: ResolvedRequest): Action => ({ type: "ADD_REQUEST", payload: { request } })
 export const createClear = (): Action => ({ type: "CLEAR" })
 
-export const createSetData = <Schema extends DefaultSchema>(data: Schema): RecordAction<Schema> => ({ type: "SET_DATA", payload: { data } })
-export const createUpdateData = <Schema extends DefaultSchema>(data: Partial<Schema>): RecordAction<Schema> => ({ type: "UPDATE_DATA", payload: { data } })
+export const createSetData = <Schema>(data: Schema): RecordAction<Schema> => ({ type: "SET_DATA", payload: { data } })
+export const createUpdateData = <Schema>(data: Partial<Schema>): RecordAction<Schema> => ({ type: "UPDATE_DATA", payload: { data } })
 
-export const createSetItems = <Schema extends DefaultSchema>(items: Schema[]): ItemsAction<Schema> => ({ type: "SET_ITEMS", payload: { items } })
-export const createAddItem = <Schema extends DefaultSchema>(item: Schema): ItemsAction<Schema> => ({ type: "ADD_ITEM", payload: { item } })
-export const createUpdateItem = <Schema extends DefaultSchema>(index: Index, item: Schema): ItemsAction<Schema> => ({ type: "UPDATE_ITEM", payload: { index, item } })
-export const createRemoveItem = <Schema extends DefaultSchema>(index: Index): ItemsAction<Schema> => ({ type: "REMOVE_ITEM", payload: { index } })
+export const createSetItems = <Schema>(items: Schema[]): ItemsAction<Schema> => ({ type: "SET_ITEMS", payload: { items } })
+export const createAddItem = <Schema>(item: Schema): ItemsAction<Schema> => ({ type: "ADD_ITEM", payload: { item } })
+export const createUpdateItem = <Schema>(index: Index, item: Schema): ItemsAction<Schema> => ({ type: "UPDATE_ITEM", payload: { index, item } })
+export const createRemoveItem = <Schema>(index: Index): ItemsAction<Schema> => ({ type: "REMOVE_ITEM", payload: { index } })
 
-export const createUpdatePartial = <Schema extends DefaultSchema>(path: KeyPath, data: Schema | Schema[]) => {
+export const createUpdatePartial = <Schema>(path: KeyPath, data: Schema | Schema[]) => {
   const action = { type: "UPDATE_PARTIAL", payload: { path, data } }
   return Array.isArray(data) ? action as ItemsAction<Schema> : action as RecordAction<Schema>
 }
@@ -133,15 +132,12 @@ const actionCreators = {
   createClear
 }
 export type ActionCreators = typeof actionCreators
-const createActionCreatorsRecord = <Schema extends DefaultSchema>() => ({
+const createActionCreatorsRecord = <Schema>() => ({
   ...actionCreators,
   createSetData: createSetData as (data: Schema | undefined) => RecordAction<Schema>,
   createUpdatePartial: createUpdatePartial as (path: KeyPath, data: Schema) => RecordAction<Schema>
 })
-// @TODO: Remove any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ActionCreatorsRecord = Record<string, (a?: any) => RecordAction>
-const createActionCreatorsItems = <Schema extends DefaultSchema>() => ({
+const createActionCreatorsItems = <Schema>() => ({
   ...actionCreators,
   createSetItems: createSetItems as (items: Schema[]) => ItemsAction<Schema>,
   createAddItem: createAddItem as (item: Schema) => ItemsAction<Schema>,
@@ -149,9 +145,6 @@ const createActionCreatorsItems = <Schema extends DefaultSchema>() => ({
   createRemoveItem: createRemoveItem as (index: Index) => ItemsAction<Schema>,
   createUpdatePartial: createUpdatePartial as (path: KeyPath, data: Schema[]) => ItemsAction<Schema>
 })
-// @TODO: Remove any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ActionCreatorsItems = Record<string, (a?: any, b?: any) => ItemsAction>
 
 const isBaseActionType = (type: string): boolean =>
   type === "SET_IS_GETTING" ||
@@ -200,7 +193,7 @@ const baseReducer = (state: BaseState, action: Action): BaseState => {
 }
 
 const updatePartial = <
-    Schema extends DefaultSchema,
+    Schema,
     State extends RecordState<Schema> | ItemsState<Schema>,
     Action extends UpdatePartialRecordAction<Schema> | UpdatePartialItemsAction<Schema>
   >(state: State, action: Action): State => {
@@ -226,7 +219,7 @@ const updatePartial = <
   return { ...state, data: nextData }
 }
 
-export const recordReducer = <Schema extends DefaultSchema>(state: RecordState<Schema>, action: RecordAction<Schema>): RecordState<Schema> => {
+export const recordReducer = <Schema>(state: RecordState<Schema>, action: RecordAction<Schema>): RecordState<Schema> => {
   if (isBaseActionType(action.type)) return baseReducer(state, action as Action) as RecordState<Schema>
   switch (action.type) {
     case "SET_DATA": {
@@ -249,7 +242,7 @@ export const recordReducer = <Schema extends DefaultSchema>(state: RecordState<S
   }
 }
 
-export const itemsReducer = <Schema extends DefaultSchema>(state: ItemsState<Schema>, action: ItemsAction<Schema>): ItemsState<Schema> => {
+export const itemsReducer = <Schema>(state: ItemsState<Schema>, action: ItemsAction<Schema>): ItemsState<Schema> => {
   if (isBaseActionType(action.type)) return baseReducer(state, action as Action) as ItemsState<Schema>
   switch (action.type) {
     case "SET_ITEMS": {
@@ -288,7 +281,7 @@ export const itemsReducer = <Schema extends DefaultSchema>(state: ItemsState<Sch
   }
 }
 
-export const useRestRecordReducer = <Schema extends DefaultSchema>(initialData?: Schema) => {
+export const useRestRecordReducer = <Schema>(initialData?: Schema) => {
   const [state, dispatch] = useReducer(
     recordReducer as (state: RecordState<Schema>, action: RecordAction<Schema>) => RecordState<Schema>,
     { ...initialState, data: initialData } as RecordState<Schema>
@@ -296,7 +289,7 @@ export const useRestRecordReducer = <Schema extends DefaultSchema>(initialData?:
   const actionCreators = createActionCreatorsRecord<Schema>()
   return [state, dispatch, actionCreators] as const
 }
-const useRestReducer = <Schema extends DefaultSchema>(initialData?: Schema[]) => {
+const useRestReducer = <Schema>(initialData?: Schema[]) => {
   const [state, dispatch] = useReducer(
     itemsReducer as (state: ItemsState<Schema>, action: ItemsAction<Schema>) => ItemsState<Schema>,
     { ...initialState, data: initialData } as ItemsState<Schema>

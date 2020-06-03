@@ -1,13 +1,12 @@
 import mapResponse from "./mapResponse"
 import mapBody from "./mapBody"
 import validate from "./validate"
-import type { Json } from "../types/Json"
 import type { Domain, Path, RequestHeaders, ResolvedRequest } from "../methods/fetch"
 import type { QueryParams } from "../methods/queryParams"
 
 type MapResponse = (response: unknown) => unknown
 type MapBody = (body: unknown) => unknown
-type Validate = (result?: Json) => boolean
+type Validate = (result?: unknown) => boolean
 export type InvalidHandling = "silent" | "warn" | "abort"
 type AfterMethod = (request: ResolvedRequest) => void
 

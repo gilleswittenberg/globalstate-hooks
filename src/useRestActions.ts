@@ -1,5 +1,4 @@
 import type { Id, KeyPath } from "./useRestReducer"
-import type { DefaultSchema } from "./useRestReducer"
 import type { HandleSuccess } from "./actions/useCreateAction"
 import type { Config } from "./config/config"
 import useRestReducer from "./useRestReducer"
@@ -8,7 +7,7 @@ import useCreateAction from "./actions/useCreateAction"
 import identify from "./utils/identify"
 import shouldMakeRequest from "./config/shouldMakeRequest"
 
-const useRestActions = <Schema extends DefaultSchema>(conf?: Partial<Config>, initialData?: Schema[]) => {
+const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) => {
 
   const config = mergeConfig(conf)
 
