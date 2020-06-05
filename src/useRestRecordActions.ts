@@ -5,6 +5,14 @@ import mergeConfig from "./config/mergeConfig"
 import useCreateAction from "./actions/useCreateAction"
 import shouldMakeRequest from "./config/shouldMakeRequest"
 
+export type RecordActions<Schema> = {
+  index: () => void
+  update: (result: Schema) => void
+  clear: () => void
+  updateState: (result: Schema) => void
+  updatePartialState: (path: KeyPath, data: Schema) => void
+}
+
 const useRestRecordActions = <Schema>(conf?: Partial<Config>, initialData?: Schema) => {
 
   const config = mergeConfig(conf)
@@ -41,6 +49,7 @@ const useRestRecordActions = <Schema>(conf?: Partial<Config>, initialData?: Sche
   }
   const updateState = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessUpdateState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
 
+  // TODO: type of data argument should be unknown
   const handleSuccessUpdatePartialState = (data: Schema, path: KeyPath) => {
     const { createUpdatePartial } = actionCreators
     dispatch(createUpdatePartial(path, data))

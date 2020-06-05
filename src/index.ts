@@ -1,10 +1,12 @@
-import type { RecordState, ItemsState } from "./useRestReducer"
+import type { ItemsState, RecordState } from "./useRestReducer"
 import type { RequestHeaders, ResolvedRequest } from "./methods/fetch"
-import useRestActions from "./useRestActions"
-import useRestRecordActions from "./useRestRecordActions"
+import useRestActions, { ItemsActions } from "./useRestActions"
+import useRestRecordActions, { RecordActions } from "./useRestRecordActions"
 
-export type { RecordState }
 export type { ItemsState }
+export type { RecordState }
+export type { ItemsActions }
+export type { RecordActions }
 export type { ResolvedRequest }
 export type { RequestHeaders }
 export { useRestActions }

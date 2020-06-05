@@ -7,6 +7,17 @@ import useCreateAction from "./actions/useCreateAction"
 import identify from "./utils/identify"
 import shouldMakeRequest from "./config/shouldMakeRequest"
 
+export type ItemsActions<Schema> = {
+  index: () => void
+  create: (result: Schema) => void
+  read: (id: Id) => void
+  update: (id: Id, result: Schema) => void
+  del: (id: Id) => void
+  clear: () => void
+  updateState: (result: Schema) => void
+  updatePartialState: (path: KeyPath, data: Schema[]) => void
+}
+
 const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) => {
 
   const config = mergeConfig(conf)
@@ -74,6 +85,7 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
   }
   const updateState = useCreateAction<Schema>(handleSuccessUpdateState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
 
+  // TODO: type of data argument should be unknown
   const handleSuccessUpdatePartialState = (data: Schema[], path: KeyPath) => {
     const { createUpdatePartial } = actionCreators
     dispatch(createUpdatePartial(path, data))
