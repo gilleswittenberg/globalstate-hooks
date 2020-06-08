@@ -14,9 +14,9 @@ export type ItemsActions<Schema> = {
   read: (id: Id, conf?: Partial<Config>) => Promise<void>
   update: (id: Id, data: Schema, conf?: Partial<Config>) => Promise<void>
   del: (id: Id, conf?: Partial<Config>) => Promise<void>
-  clear: () => Promise<void>
-  updateState: (id: Id, data: Schema) => Promise<void>
-  updatePartialState: (path: KeyPath, data: Json) => Promise<void>
+  clear: () => void
+  updateState: (id: Id, data: Schema) => void
+  updatePartialState: (path: KeyPath, data: Json) => void
 }
 
 const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) => {

@@ -9,9 +9,9 @@ import shouldMakeRequest from "./config/shouldMakeRequest"
 export type RecordActions<Schema> = {
   index: (conf?: Partial<Config>) => Promise<void>
   update: (data: Schema, conf?: Partial<Config>) => Promise<void>
-  clear: () => Promise<void>
-  updateState: (data: Schema) => Promise<void>
-  updatePartialState: (path: KeyPath, data: Json) => Promise<void>
+  clear: () => void
+  updateState: (data: Schema) => void
+  updatePartialState: (path: KeyPath, data: Json) => void
 }
 
 const useRestRecordActions = <Schema>(conf?: Partial<Config>, initialData?: Schema) => {
