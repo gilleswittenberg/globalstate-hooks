@@ -72,7 +72,7 @@ describe("useRestRecordActions", () => {
           .post("/pet/")
           .reply(200, "Fififi")
         const [, { update }] = result.current
-        await act(async () => await update())
+        await act(async () => await update("Fififi"))
 
         const [state] = result.current
         expect(state.data).toEqual("Fififi")

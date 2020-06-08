@@ -57,7 +57,7 @@ const useRestRecordActions = <Schema>(conf?: Partial<Config>, initialData?: Sche
   }
   const updatePartialState = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessUpdatePartialState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
 
-  return [state, { index, update, clear, updateState, updatePartialState }] as const
+  return [state, { index, update, clear, updateState, updatePartialState } as RecordActions<Schema>] as const
 }
 
 export default useRestRecordActions

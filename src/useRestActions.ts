@@ -15,7 +15,7 @@ export type ItemsActions<Schema> = {
   update: (id: Id, data: Schema, conf?: Partial<Config>) => Promise<void>
   del: (id: Id, conf?: Partial<Config>) => Promise<void>
   clear: () => Promise<void>
-  updateState: (data: Schema) => Promise<void>
+  updateState: (id: Id, data: Schema) => Promise<void>
   updatePartialState: (path: KeyPath, data: Json) => Promise<void>
 }
 
@@ -93,7 +93,7 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
   }
   const updatePartialState = useCreateAction<Schema>(handleSuccessUpdatePartialState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
 
-  return [state, { index, create, read, update, del, clear, updateState, updatePartialState }] as const
+  return [state, { index, create, read, update, del, clear, updateState, updatePartialState } as ItemsActions<Schema>] as const
 }
 
 export default useRestActions

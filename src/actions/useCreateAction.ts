@@ -93,11 +93,11 @@ export default <
   }
 
   type ReturnLocalOverload = {
-    (): void
-    (a: Id): void
-    (a: Schema): void
-    (a: Id, b: Schema): void
-    (a: KeyPath, b: Json): void
+    (): Promise<void>
+    (a: Id): Promise<void>
+    (a: Schema): Promise<void>
+    (a: Id, b: Schema): Promise<void>
+    (a: KeyPath, b: Json): Promise<void>
   }
   const retLocal: ReturnLocalOverload = async (a?: Id | KeyPath | Schema, b?: Schema | Json) => {
     const bb = b !== undefined ? b : a
@@ -117,7 +117,7 @@ export default <
     if (method === undefined) return
 
     // params
-    const isId = (a: Id | Schema | undefined): a is Id => typeof a === "string" || typeof a === "number"
+    const isId = (a: Id | Schema | undefined): a is Id => typeof a === "number"
     const id: OId = isId(a) ? a : undefined
     const data: Schema | undefined = b !== undefined ? b : a !== undefined && !isId(a) ? a : undefined
 
