@@ -145,5 +145,5 @@ export default <
     }
   }
 
-  return useCallback(method !== undefined ? ret : retLocal, [])
+  return useCallback(method !== undefined ? ret : retLocal, [config])
 }
