@@ -1,3 +1,4 @@
+import type { Json } from "./types/Json"
 import type { Id, KeyPath } from "./useRestReducer"
 import type { HandleSuccess } from "./actions/useCreateAction"
 import type { Config } from "./config/config"
@@ -8,14 +9,14 @@ import identify from "./utils/identify"
 import shouldMakeRequest from "./config/shouldMakeRequest"
 
 export type ItemsActions<Schema> = {
-  index: () => void
-  create: (result: Schema) => void
-  read: (id: Id) => void
-  update: (id: Id, result: Schema) => void
-  del: (id: Id) => void
-  clear: () => void
-  updateState: (result: Schema) => void
-  updatePartialState: (path: KeyPath, data: Schema[]) => void
+  index: (conf?: Partial<Config>) => Promise<void>
+  create: (data: Schema, conf?: Partial<Config>) => Promise<void>
+  read: (id: Id, conf?: Partial<Config>) => Promise<void>
+  update: (id: Id, data: Schema, conf?: Partial<Config>) => Promise<void>
+  del: (id: Id, conf?: Partial<Config>) => Promise<void>
+  clear: () => Promise<void>
+  updateState: (data: Schema) => Promise<void>
+  updatePartialState: (path: KeyPath, data: Json) => Promise<void>
 }
 
 const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) => {

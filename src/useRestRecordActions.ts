@@ -1,3 +1,4 @@
+import type { Json } from "./types/Json"
 import type { Config } from "./config/config"
 import type { HandleSuccess } from "./actions/useCreateAction"
 import { useRestRecordReducer, KeyPath, RecordState, RecordAction } from "./useRestReducer"
@@ -6,11 +7,11 @@ import useCreateAction from "./actions/useCreateAction"
 import shouldMakeRequest from "./config/shouldMakeRequest"
 
 export type RecordActions<Schema> = {
-  index: () => void
-  update: (result: Schema) => void
-  clear: () => void
-  updateState: (result: Schema) => void
-  updatePartialState: (path: KeyPath, data: Schema) => void
+  index: (conf?: Partial<Config>) => Promise<void>
+  update: (data: Schema, conf?: Partial<Config>) => Promise<void>
+  clear: () => Promise<void>
+  updateState: (data: Schema) => Promise<void>
+  updatePartialState: (path: KeyPath, data: Json) => Promise<void>
 }
 
 const useRestRecordActions = <Schema>(conf?: Partial<Config>, initialData?: Schema) => {
