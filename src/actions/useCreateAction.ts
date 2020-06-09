@@ -4,7 +4,8 @@ import type { Json } from "../types/Json"
 import type { Id, OId, KeyPath, ItemsState, RecordState } from "../useRestReducer"
 import type { Method, RequestURL, RequestHeaders, ResolvedRequest } from "../methods/fetch"
 import type { Config } from "../config/config"
-import { Dispatch, useCallback } from "react"
+//import { Dispatch, useCallback } from "react"
+import { Dispatch } from "react"
 import createUrl from "../methods/createUrl"
 import createMethods from "../methods/createMethods"
 import mergeConfig from "../config/mergeConfig"
@@ -145,5 +146,6 @@ export default <
     }
   }
 
-  return useCallback(method !== undefined ? ret : retLocal, [config])
+  //return useCallback(method !== undefined ? ret : retLocal, [config])
+  return method !== undefined ? ret : retLocal
 }
