@@ -122,6 +122,7 @@ export default <
     const id: OId = isId(a) ? a : undefined
     const data: Schema | undefined = b !== undefined ? b : a !== undefined && !isId(a) ? a : undefined
 
+    console.log(config)
     const { api, mapResponse, mapBody, validate, invalidHandling, afterSuccess, afterFailure } = mergeConfig(conf, config)
 
     if (api === undefined) return
@@ -148,6 +149,7 @@ export default <
 
   //return useCallback(method !== undefined ? ret : retLocal, [config])
 
-  console.log(method !== undefined ? ret : retLocal)
+  console.log(config)
+  //console.log(method !== undefined ? ret : retLocal)
   return method !== undefined ? ret : retLocal
 }
