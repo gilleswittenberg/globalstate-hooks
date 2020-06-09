@@ -14,6 +14,6 @@ describe("mergeConfig", () => {
     const config = { api: { additionalHeaders } }
     const mergedConfig = mergeConfig(config)
     const mergedConfig1 = mergeConfig(undefined, mergedConfig)
-    expect(mergedConfig.api).toEqual({ additionalHeaders })
+    expect(mergedConfig1.api).toEqual({ additionalHeaders })
   })
 })
