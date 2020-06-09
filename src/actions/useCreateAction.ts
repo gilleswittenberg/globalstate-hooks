@@ -7,7 +7,7 @@ import type { Config } from "../config/config"
 //import { Dispatch, useCallback } from "react"
 import { Dispatch } from "react"
 import createUrl from "../methods/createUrl"
-import createMethods from "../methods/createMethods"
+import { createMethods } from "../methods/fetch"
 import mergeConfig from "../config/mergeConfig"
 import handleInvalid from "../config/handleInvalid"
 
@@ -130,6 +130,7 @@ export default <
     // REST request
     const url = createUrl(api, id)
     const { additionalHeaders } = api
+    console.log(additionalHeaders)
     const mappedData = mapBody(data)
     const request =
       method === "GET" || method === "DELETE" ?

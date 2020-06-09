@@ -47,7 +47,7 @@ const parseResponse = async (response: Response): Promise<Result> => {
 const fetch = async (url: RequestURL, method: Method = "GET", additionalHeaders: RequestHeaders = {}, body?: RequestBody, shouldParseResponse = true): Promise<ResolvedRequest> => {
   const headers = getHeaders(additionalHeaders)
   const bodyString = body !== undefined ? JSON.stringify(body) : undefined
-  console.log(headers)
+  console.log(additionalHeaders, headers)
   const response = await window.fetch(url, { method, headers, body: bodyString })
   const ok = response.ok
   const status = response.status
