@@ -128,7 +128,6 @@ export default <
     // REST request
     const url = createUrl(api, id)
     const { additionalHeaders } = api
-    console.log(conf, config, additionalHeaders)
     const mappedData = mapBody(data)
     const request =
       method === "GET" || method === "DELETE" ?
