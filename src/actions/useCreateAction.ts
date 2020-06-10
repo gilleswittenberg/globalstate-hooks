@@ -4,8 +4,7 @@ import type { Json } from "../types/Json"
 import type { Id, OId, KeyPath, ItemsState, RecordState } from "../useRestReducer"
 import type { Method, RequestURL, RequestHeaders, ResolvedRequest } from "../methods/fetch"
 import type { Config } from "../config/config"
-//import { Dispatch, useCallback } from "react"
-import { Dispatch } from "react"
+import { Dispatch, useCallback } from "react"
 import createUrl from "../methods/createUrl"
 import { createMethods } from "../methods/fetch"
 import mergeConfig from "../config/mergeConfig"
@@ -122,7 +121,6 @@ export default <
     const id: OId = isId(a) ? a : undefined
     const data: Schema | undefined = b !== undefined ? b : a !== undefined && !isId(a) ? a : undefined
 
-    console.log(config)
     const { api, mapResponse, mapBody, validate, invalidHandling, afterSuccess, afterFailure } = mergeConfig(conf, config)
 
     if (api === undefined) return
@@ -130,7 +128,7 @@ export default <
     // REST request
     const url = createUrl(api, id)
     const { additionalHeaders } = api
-    console.log(additionalHeaders)
+    console.log(conf, config, additionalHeaders)
     const mappedData = mapBody(data)
     const request =
       method === "GET" || method === "DELETE" ?
@@ -148,9 +146,6 @@ export default <
     }
   }
 
-  //return useCallback(method !== undefined ? ret : retLocal, [config])
+  return useCallback(method !== undefined ? ret : retLocal, [config])
 
-  console.log(config)
-  //console.log(method !== undefined ? ret : retLocal)
-  return method !== undefined ? ret : retLocal
 }
