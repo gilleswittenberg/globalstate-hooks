@@ -41,14 +41,14 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     dispatch(createAddItem(result))
   }
   const createConfig = mergeConfig(config.create, config)
-  const create = useCreateAction<Schema>(handleSuccessCreate as HandleSuccess<Schema>, shouldMakeRequest(createConfig) ? "POST" : undefined, config, actionCreators, dispatch)
+  const create = useCreateAction<Schema>(handleSuccessCreate as HandleSuccess<Schema>, shouldMakeRequest(createConfig) ? "POST" : undefined, createConfig, actionCreators, dispatch)
 
   const handleSuccessRead = (result: Schema) => {
     const { createAddItem } = actionCreators
     dispatch(createAddItem(result))
   }
   const readConfig = mergeConfig(config.read, config)
-  const read = useCreateAction<Schema>(handleSuccessRead as HandleSuccess<Schema>, shouldMakeRequest(readConfig) ? "GET" : undefined, config, actionCreators, dispatch)
+  const read = useCreateAction<Schema>(handleSuccessRead as HandleSuccess<Schema>, shouldMakeRequest(readConfig) ? "GET" : undefined, readConfig, actionCreators, dispatch)
 
   const handleSuccessUpdate = (result: Schema, id: Id) => {
     const { createUpdateItem, createAddItem } = actionCreators
@@ -60,7 +60,7 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     }
   }
   const updateConfig = mergeConfig(config.update, config)
-  const update = useCreateAction<Schema>(handleSuccessUpdate as HandleSuccess<Schema>, shouldMakeRequest(updateConfig) ? "PUT" : undefined, config, actionCreators, dispatch)
+  const update = useCreateAction<Schema>(handleSuccessUpdate as HandleSuccess<Schema>, shouldMakeRequest(updateConfig) ? "PUT" : undefined, updateConfig, actionCreators, dispatch)
 
   const handleSuccessDelete = (id: Id) => {
     const { createRemoveItem } = actionCreators
@@ -70,7 +70,7 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     }
   }
   const delConfig = mergeConfig(config.del, config)
-  const del = useCreateAction<Schema>(handleSuccessDelete as HandleSuccess<Schema>, shouldMakeRequest(delConfig) ? "DELETE" : undefined, config, actionCreators, dispatch)
+  const del = useCreateAction<Schema>(handleSuccessDelete as HandleSuccess<Schema>, shouldMakeRequest(delConfig) ? "DELETE" : undefined, delConfig, actionCreators, dispatch)
 
   const handleSuccessClear = () => {
     const { createClear } = actionCreators
