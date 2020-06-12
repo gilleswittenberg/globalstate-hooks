@@ -145,8 +145,6 @@ export default <
     }
   }
 
-  type Return = ReturnLocalOverload | ReturnOverload
-
-  return useCallback((method !== undefined ? ret : retLocal) as Return, [config])
+  return useCallback((method !== undefined ? ret : retLocal), [config])
 
 }
