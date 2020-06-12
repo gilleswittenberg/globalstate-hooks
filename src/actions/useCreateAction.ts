@@ -119,7 +119,7 @@ export default <
 
     // params
     const id: OId = isId(a) ? a : undefined
-    const data: Optional<Schema> = b !== undefined ? b : a !== undefined && !isId(a) ? a : undefined
+    const data: Optional<Schema> = b !== undefined ? b : a !== undefined && id === undefined ? a as Schema : undefined
 
     const { api, mapResponse, mapBody, validate, invalidHandling, afterSuccess, afterFailure } = mergeConfig(conf, config)
 
