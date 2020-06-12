@@ -12,11 +12,12 @@ import handleInvalid from "../config/handleInvalid"
 import isId from "../utils/isId"
 
 export type HandleSuccess<Schema> = {
-  () : void;
-  (id: Id | KeyPath) : void;
-  (result: Schema) : void;
-  (result: Schema[]) : void;
-  (result: Schema, id: Id | KeyPath) : void;
+  () : void
+  (id: Id) : void
+  (result: Schema) : void
+  (result: Schema[]) : void
+  (result: Schema, id: Id) : void
+  (result: unknown, id: KeyPath) : void
 }
 
 export default <
