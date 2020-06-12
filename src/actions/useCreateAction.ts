@@ -9,6 +9,7 @@ import createUrl from "../methods/createUrl"
 import { createMethods } from "../methods/fetch"
 import mergeConfig from "../config/mergeConfig"
 import handleInvalid from "../config/handleInvalid"
+import isId from "../utils/isId"
 
 export type HandleSuccess<Schema> = {
   () : void;
@@ -80,11 +81,11 @@ export default <
     return resolvedRequest
   }
 
-  const doHandleSuccess = (result?: Schema | Json, id?: Id | KeyPath) => {
+  const doHandleSuccess = (result?: Schema | unknown, id?: Id | KeyPath) => {
     if (result !== undefined && id !== undefined) {
-      (handleSuccess as (result: Schema | Json, id: Id | KeyPath) => void)(result, id)
+      (handleSuccess as (result: Schema | unknown, id: Id | KeyPath) => void)(result, id)
     } else if (result !== undefined) {
-      (handleSuccess as (result: Schema | Json) => void)(result)
+      (handleSuccess as (result: Schema | unknown) => void)(result)
     } else if (id !== undefined) {
       (handleSuccess as (id: Id | KeyPath) => void)(id)
     } else {
@@ -94,32 +95,30 @@ export default <
 
   type ReturnLocalOverload = {
     (): Promise<void>
-    (a: Id): Promise<void>
     (a: Schema): Promise<void>
     (a: Id, b: Schema): Promise<void>
-    (a: KeyPath, b: Json): Promise<void>
+    (a: KeyPath, b: unknown): Promise<void>
   }
-  const retLocal: ReturnLocalOverload = async (a?: Id | KeyPath | Schema, b?: Schema | Json) => {
+  const retLocal: ReturnLocalOverload = async (a?: Id | KeyPath | Schema, b?: Schema | unknown) => {
     const bb = b !== undefined ? b : a
     const aa = b !== undefined ? a as Id | KeyPath : undefined
-    doHandleSuccess(bb as Optional<Schema | Json>, aa as Optional<Id | KeyPath>)
+    doHandleSuccess(bb as Optional<Schema | unknown>, aa as Optional<Id | KeyPath>)
   }
 
   type ReturnOverload = {
-    (a: Id | Schema | undefined, b: Schema | undefined, conf: Partial<Config>): Promise<void>
-    (a: Id | undefined, b: Schema): Promise<void>
+    (): Promise<void>
     (a: Id): Promise<void>
     (a: Schema): Promise<void>
-    (): Promise<void>
+    (a: Id, b: Schema): Promise<void>
+    (a: Id | Schema | undefined, b: Schema | undefined, conf: Partial<Config>): Promise<void>
   }
   const ret: ReturnOverload = async (a?: Id | Schema, b?: Schema, conf?: Partial<Config>) => {
     // guards
     if (method === undefined) return
 
     // params
-    const isId = (a: Id | Schema | undefined): a is Id => typeof a === "number"
     const id: OId = isId(a) ? a : undefined
-    const data: Schema | undefined = b !== undefined ? b : a !== undefined && !isId(a) ? a : undefined
+    const data: Optional<Schema> = b !== undefined ? b : a !== undefined && !isId(a) ? a : undefined
 
     const { api, mapResponse, mapBody, validate, invalidHandling, afterSuccess, afterFailure } = mergeConfig(conf, config)
 
@@ -140,11 +139,13 @@ export default <
       // @TODO: Pass result, id, config
       afterSuccess(request)
     } else {
-      // @TODO: Pass result, id, config
+      // @TODO: Pass result (error response), id, config
       afterFailure(request)
     }
   }
 
-  return useCallback(method !== undefined ? ret : retLocal, [config])
+  type Return = ReturnLocalOverload | ReturnOverload
+
+  return useCallback((method !== undefined ? ret : retLocal) as Return, [config])
 
 }

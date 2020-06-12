@@ -8,7 +8,8 @@ import produce from "immer"
 import isSimpleValue from "./utils/isSimpleValue"
 
 export type Index = number
-export type Id = number
+export type Uuid = string
+export type Id = number | Uuid
 export type OId = Optional<Id>
 export type Key = string
 export type KeyPath = Plural<Key | Index>
