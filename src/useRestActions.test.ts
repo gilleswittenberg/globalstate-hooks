@@ -78,6 +78,21 @@ describe("useRestActions", () => {
       const [state] = result.current
       expect(state.data).toEqual([item])
     })
+
+    it("uuid", async () => {
+      const { result } = renderHook(() => useRestActions<string>(config))
+
+      const item = "123e4567-e89b-12d3-a456-426614174000"
+
+      nock(domain)
+        .post("/pets/")
+        .reply(201, item)
+      const [, { create }] = result.current
+      await act(async () => await create(item))
+
+      const [state] = result.current
+      expect(state.data).toEqual([item])
+    })
   })
 
   describe("read", () => {

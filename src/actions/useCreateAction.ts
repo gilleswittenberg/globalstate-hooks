@@ -118,7 +118,7 @@ export default <
     if (method === undefined) return
 
     // params
-    const id: OId = isId(a) ? a : undefined
+    const id: OId = method !== "POST" && isId(a) ? a : undefined
     const data: Optional<Schema> = b !== undefined ? b : a !== undefined && id === undefined ? a as Schema : undefined
 
     const { api, mapResponse, mapBody, validate, invalidHandling, afterSuccess, afterFailure } = mergeConfig(conf, config)
