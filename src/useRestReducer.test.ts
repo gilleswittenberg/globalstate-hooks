@@ -16,7 +16,7 @@ import {
 
 describe("baseState", () => {
   it("createStartGetting, createStopGetting", () => {
-    type Schema = {}
+    type Schema = unknown
     const state = recordReducer<Schema>(initialState, createStartGetting())
     expect(state.isGetting).toBe(true)
     const state1 = recordReducer(state, createStopGetting())
@@ -26,19 +26,19 @@ describe("baseState", () => {
 
 describe("computedState", () => {
   it("isFetching", () => {
-    type Schema = {}
+    type Schema = unknown
     const state = recordReducer<Schema>(initialState, createStartGetting())
     expect(state.isFetching).toBe(true)
   })
 
   it("isUpdating", () => {
-    type Schema = {}
+    type Schema = unknown
     const state = recordReducer<Schema>(initialState, createStartPosting())
     expect(state.isUpdating).toBe(true)
   })
 
   it("isInitialized", () => {
-    type Schema = {}
+    type Schema = unknown
     const state = recordReducer<Schema>(initialState, createStartGetting())
     expect(state.isInitialized).toBe(false)
   })
