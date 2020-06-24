@@ -1,23 +1,20 @@
 import type { ActionCreators, ItemsAction, RecordAction } from "../useRestReducer"
-import type { Optional } from "../types/Optional"
 import type { Json } from "../types/Json"
-import type { Id, OId, KeyPath, ItemsState, RecordState } from "../useRestReducer"
+import type { ItemsState, RecordState } from "../useRestReducer"
 import type { Method, RequestURL, RequestHeaders, ResolvedRequest } from "../methods/fetch"
 import type { Config } from "../config/config"
+import type { Identifiable } from "../utils/identify"
 import { Dispatch, useCallback } from "react"
 import createUrl from "../methods/createUrl"
 import { createMethods } from "../methods/fetch"
 import mergeConfig from "../config/mergeConfig"
 import handleInvalid from "../config/handleInvalid"
-import isId from "../utils/isId"
 
 export type HandleSuccess<Schema> = {
   () : void
-  (id: Id) : void
+  (result: Partial<Schema>) : void
   (result: Schema) : void
   (result: Schema[]) : void
-  (result: Schema, id: Id) : void
-  (result: unknown, id: KeyPath) : void
 }
 
 export default <
@@ -82,13 +79,9 @@ export default <
     return resolvedRequest
   }
 
-  const doHandleSuccess = (result?: Schema | unknown, id?: Id | KeyPath) => {
-    if (result !== undefined && id !== undefined) {
-      (handleSuccess as (result: Schema | unknown, id: Id | KeyPath) => void)(result, id)
-    } else if (result !== undefined) {
-      (handleSuccess as (result: Schema | unknown) => void)(result)
-    } else if (id !== undefined) {
-      (handleSuccess as (id: Id | KeyPath) => void)(id)
+  const doHandleSuccess = (result?: Partial<Schema>) => {
+    if (result !== undefined) {
+      (handleSuccess as (result: Partial<Schema>) => void)(result)
     } else {
       (handleSuccess as () => void)()
     }
@@ -97,36 +90,26 @@ export default <
   type ReturnLocalOverload = {
     (): Promise<void>
     (a: Schema): Promise<void>
-    (a: Id, b: Schema): Promise<void>
-    (a: KeyPath, b: unknown): Promise<void>
   }
-  const retLocal: ReturnLocalOverload = async (a?: Id | KeyPath | Schema, b?: Schema | unknown) => {
-    const bb = b !== undefined ? b : a
-    const aa = b !== undefined ? a as Id | KeyPath : undefined
-    doHandleSuccess(bb as Optional<Schema | unknown>, aa as Optional<Id | KeyPath>)
+  const retLocal: ReturnLocalOverload = async (data?: Schema) => {
+    doHandleSuccess(data)
   }
 
   type ReturnOverload = {
     (): Promise<void>
-    (a: Id): Promise<void>
-    (a: Schema): Promise<void>
-    (a: Id, b: Schema): Promise<void>
-    (a: Id | Schema | undefined, b: Schema | undefined, conf: Partial<Config>): Promise<void>
+    (data: Partial<Schema>): Promise<void>
+    (data: Partial<Schema>, conf: Partial<Config>): Promise<void>
   }
-  const ret: ReturnOverload = async (a?: Id | Schema, b?: Schema, conf?: Partial<Config>) => {
+  const ret: ReturnOverload = async (data?: Partial<Schema>, conf?: Partial<Config>) => {
     // guards
     if (method === undefined) return
-
-    // params
-    const id: OId = method !== "POST" && isId(a) ? a : undefined
-    const data: Optional<Schema> = b !== undefined ? b : a !== undefined && id === undefined ? a as Schema : undefined
 
     const { api, mapResponse, mapBody, validate, invalidHandling, afterSuccess, afterFailure } = mergeConfig(conf, config)
 
     if (api === undefined) return
 
     // REST request
-    const url = createUrl(api, id)
+    const url = createUrl(api, (data as Identifiable)?.id)
     const { additionalHeaders } = api
     const mappedData = mapBody(data)
     const request =
@@ -134,9 +117,9 @@ export default <
         await makeRequest(method, url, additionalHeaders) :
         await makeRequest(method, url, additionalHeaders, mappedData as Json)
     if (request.ok) {
-      const result = mapResponse(request.result) as Schema
+      const result = request.result !== undefined ? mapResponse(request.result) as Schema : { id: (data as Identifiable)?.id } as Partial<Schema>
       if (handleInvalid(result, validate(result), invalidHandling)) return
-      doHandleSuccess(result, id)
+      doHandleSuccess(result)
       // @TODO: Pass result, id, config
       afterSuccess(request)
     } else {

@@ -1,7 +1,6 @@
-import type { Json } from "./types/Json"
 import type { Config } from "./config/config"
 import type { HandleSuccess } from "./actions/useCreateAction"
-import { useRestRecordReducer, KeyPath, RecordState, RecordAction } from "./useRestReducer"
+import { useRestRecordReducer, RecordState, RecordAction } from "./useRestReducer"
 import mergeConfig from "./config/mergeConfig"
 import useCreateAction from "./actions/useCreateAction"
 import shouldMakeRequest from "./config/shouldMakeRequest"
@@ -11,7 +10,6 @@ export type RecordActions<Schema> = {
   update: (data: Schema, conf?: Partial<Config>) => Promise<void>
   clear: () => void
   updateState: (data: Schema) => void
-  updatePartialState: (path: KeyPath, data: Json) => void
 }
 
 const useRestRecordActions = <Schema>(conf?: Partial<Config>, initialData?: Schema) => {
@@ -50,14 +48,7 @@ const useRestRecordActions = <Schema>(conf?: Partial<Config>, initialData?: Sche
   }
   const updateState = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessUpdateState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
 
-  // TODO: type of data argument should be unknown
-  const handleSuccessUpdatePartialState = (data: Schema, path: KeyPath) => {
-    const { createUpdatePartial } = actionCreators
-    dispatch(createUpdatePartial(path, data))
-  }
-  const updatePartialState = useCreateAction<Schema, RecordAction<Schema>, RecordState<Schema>>(handleSuccessUpdatePartialState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
-
-  return [state, { index, update, clear, updateState, updatePartialState } as RecordActions<Schema>] as const
+  return [state, { index, update, clear, updateState } as RecordActions<Schema>] as const
 }
 
 export default useRestRecordActions

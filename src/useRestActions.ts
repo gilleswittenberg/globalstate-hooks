@@ -1,5 +1,3 @@
-import type { Json } from "./types/Json"
-import type { Id, KeyPath } from "./useRestReducer"
 import type { HandleSuccess } from "./actions/useCreateAction"
 import type { Config } from "./config/config"
 import useRestReducer from "./useRestReducer"
@@ -11,12 +9,11 @@ import shouldMakeRequest from "./config/shouldMakeRequest"
 export type ItemsActions<Schema> = {
   index: (conf?: Partial<Config>) => Promise<void>
   create: (data: Schema, conf?: Partial<Config>) => Promise<void>
-  read: (id: Id, conf?: Partial<Config>) => Promise<void>
-  update: (id: Id, data: Schema, conf?: Partial<Config>) => Promise<void>
-  del: (id: Id, conf?: Partial<Config>) => Promise<void>
+  read: (data: Partial<Schema>, conf?: Partial<Config>) => Promise<void>
+  update: (data: Schema, conf?: Partial<Config>) => Promise<void>
+  del: (data: Schema, conf?: Partial<Config>) => Promise<void>
   clear: () => void
-  updateState: (id: Id, data: Schema) => void
-  updatePartialState: (path: KeyPath, data: Json) => void
+  updateState: (data: Schema) => void
 }
 
 const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) => {
@@ -50,24 +47,23 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
   const readConfig = mergeConfig(config.read, config)
   const read = useCreateAction<Schema>(handleSuccessRead as HandleSuccess<Schema>, shouldMakeRequest(readConfig) ? "GET" : undefined, readConfig, actionCreators, dispatch)
 
-  const handleSuccessUpdate = (result: Schema, id: Id) => {
+  const handleSuccessUpdate = (item: Schema) => {
     const { createUpdateItem, createAddItem } = actionCreators
-    const index = identify(state.data, id)
+    const index = identify(state.data, item)
     if (index > -1) {
-      dispatch(createUpdateItem(index, result))
+      dispatch(createUpdateItem(index, item))
     } else {
-      dispatch(createAddItem(result))
+      dispatch(createAddItem(item))
     }
   }
   const updateConfig = mergeConfig(config.update, config)
   const update = useCreateAction<Schema>(handleSuccessUpdate as HandleSuccess<Schema>, shouldMakeRequest(updateConfig) ? "PUT" : undefined, updateConfig, actionCreators, dispatch)
 
-  const handleSuccessDelete = (id: Id) => {
+  const handleSuccessDelete = (item: Schema) => {
     const { createRemoveItem } = actionCreators
-    const index = identify(state.data, id)
-    if (index > -1) {
-      dispatch(createRemoveItem(index))
-    }
+    const index = identify(state.data, item)
+    if (index === -1) return
+    dispatch(createRemoveItem(index))
   }
   const delConfig = mergeConfig(config.del, config)
   const del = useCreateAction<Schema>(handleSuccessDelete as HandleSuccess<Schema>, shouldMakeRequest(delConfig) ? "DELETE" : undefined, delConfig, actionCreators, dispatch)
@@ -78,22 +74,15 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
   }
   const clear = useCreateAction<Schema>(handleSuccessClear as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
 
-  const handleSuccessUpdateState = (result: Schema, id: Id) => {
+  const handleSuccessUpdateState = (item: Schema) => {
     const { createUpdateItem } = actionCreators
-    const index = identify(state.data, id)
+    const index = identify(state.data, item)
     if (index === -1) return
-    dispatch(createUpdateItem(index, result))
+    dispatch(createUpdateItem(index, item))
   }
   const updateState = useCreateAction<Schema>(handleSuccessUpdateState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
 
-  // TODO: type of data argument should be unknown
-  const handleSuccessUpdatePartialState = (data: Schema[], path: KeyPath) => {
-    const { createUpdatePartial } = actionCreators
-    dispatch(createUpdatePartial(path, data))
-  }
-  const updatePartialState = useCreateAction<Schema>(handleSuccessUpdatePartialState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
-
-  return [state, { index, create, read, update, del, clear, updateState, updatePartialState } as ItemsActions<Schema>] as const
+  return [state, { index, create, read, update, del, clear, updateState } as ItemsActions<Schema>] as const
 }
 
 export default useRestActions
