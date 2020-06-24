@@ -1,2 +1,2 @@
-import { enableES5 } from "immer"
-enableES5()
+import { enableAllPlugins } from "immer"
+enableAllPlugins()
