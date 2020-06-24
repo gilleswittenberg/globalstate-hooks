@@ -12,3 +12,5 @@ export type { ResolvedRequest }
 export type { RequestHeaders }
 export { useRestActions }
 export { useRestRecordActions }
+
+export * as immer from "immer"
