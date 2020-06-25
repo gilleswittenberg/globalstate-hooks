@@ -3,7 +3,6 @@ import type { Json } from "../types/Json"
 import type { ItemsState, RecordState } from "../useRestReducer"
 import type { Method, RequestURL, RequestHeaders, ResolvedRequest } from "../methods/fetch"
 import type { Config } from "../config/config"
-import type { Identifiable } from "../utils/identify"
 import { Dispatch, useCallback } from "react"
 import createUrl from "../methods/createUrl"
 import { createMethods } from "../methods/fetch"
@@ -104,12 +103,13 @@ export default <
     // guards
     if (method === undefined) return
 
-    const { api, mapResponse, mapBody, validate, invalidHandling, afterSuccess, afterFailure } = mergeConfig(conf, config)
+    const { api, idKey, mapResponse, mapBody, validate, invalidHandling, afterSuccess, afterFailure } = mergeConfig(conf, config)
 
     if (api === undefined) return
 
     // REST request
-    const url = createUrl(api, (data as Identifiable)?.id)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const url = createUrl(api, (data as any)?.[idKey])
     const { additionalHeaders } = api
     const mappedData = mapBody(data)
     const request =
@@ -117,7 +117,8 @@ export default <
         await makeRequest(method, url, additionalHeaders) :
         await makeRequest(method, url, additionalHeaders, mappedData as Json)
     if (request.ok) {
-      const result = request.result !== undefined ? mapResponse(request.result) as Schema : { id: (data as Identifiable)?.id } as Partial<Schema>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = request.result !== undefined ? mapResponse(request.result) as Schema : { [idKey]: (data as any)?.[idKey] } as Partial<Schema>
       if (handleInvalid(result, validate(result), invalidHandling)) return
       doHandleSuccess(result)
       // @TODO: Pass result, id, config

@@ -4,6 +4,7 @@ import validate from "./validate"
 import type { Domain, Path, RequestHeaders, ResolvedRequest } from "../methods/fetch"
 import type { QueryParams } from "../methods/queryParams"
 
+export type IdKey = string
 type MapResponse = (response: unknown) => unknown
 type MapBody = (body: unknown) => unknown
 type Validate = (result?: unknown) => boolean
@@ -20,6 +21,7 @@ export type APIConfig = {
 }
 type BaseConfig = {
   api?: APIConfig
+  idKey: IdKey
   mapResponse: MapResponse
   mapBody: MapBody
   validate: Validate
@@ -40,6 +42,7 @@ const afterMethod = () => {} // eslint-disable-line @typescript-eslint/no-empty-
 
 export const defaultConfig: Config = {
   api: undefined,
+  idKey: "id",
   mapResponse,
   mapBody,
   validate,

@@ -26,57 +26,64 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     actionCreators
   ] = useRestReducer<Schema>(initialData)
 
+  // index
+  const indexConfig = mergeConfig(config.index, config)
   const handleSuccessIndex = (result: Schema[]) => {
     const { createSetItems } = actionCreators
     dispatch(createSetItems(result))
   }
-  const indexConfig = mergeConfig(config.index, config)
   const index = useCreateAction<Schema>(handleSuccessIndex as HandleSuccess<Schema>, shouldMakeRequest(indexConfig) ? "GET" : undefined, indexConfig, actionCreators, dispatch)
 
+  // create
+  const createConfig = mergeConfig(config.create, config)
   const handleSuccessCreate = (result: Schema) => {
     const { createAddItem } = actionCreators
     dispatch(createAddItem(result))
   }
-  const createConfig = mergeConfig(config.create, config)
   const create = useCreateAction<Schema>(handleSuccessCreate as HandleSuccess<Schema>, shouldMakeRequest(createConfig) ? "POST" : undefined, createConfig, actionCreators, dispatch)
 
+  // read
+  const readConfig = mergeConfig(config.read, config)
   const handleSuccessRead = (result: Schema) => {
     const { createAddItem } = actionCreators
     dispatch(createAddItem(result))
   }
-  const readConfig = mergeConfig(config.read, config)
   const read = useCreateAction<Schema>(handleSuccessRead as HandleSuccess<Schema>, shouldMakeRequest(readConfig) ? "GET" : undefined, readConfig, actionCreators, dispatch)
 
+  // update
+  const updateConfig = mergeConfig(config.update, config)
   const handleSuccessUpdate = (item: Schema) => {
     const { createUpdateItem, createAddItem } = actionCreators
-    const index = identify(state.data, item)
+    const index = identify(state.data, item, config.idKey)
     if (index > -1) {
       dispatch(createUpdateItem(index, item))
     } else {
       dispatch(createAddItem(item))
     }
   }
-  const updateConfig = mergeConfig(config.update, config)
   const update = useCreateAction<Schema>(handleSuccessUpdate as HandleSuccess<Schema>, shouldMakeRequest(updateConfig) ? "PUT" : undefined, updateConfig, actionCreators, dispatch)
 
+  // delete
+  const deleteConfig = mergeConfig(config.del, config)
   const handleSuccessDelete = (item: Schema) => {
     const { createRemoveItem } = actionCreators
-    const index = identify(state.data, item)
+    const index = identify(state.data, item, config.idKey)
     if (index === -1) return
     dispatch(createRemoveItem(index))
   }
-  const delConfig = mergeConfig(config.del, config)
-  const del = useCreateAction<Schema>(handleSuccessDelete as HandleSuccess<Schema>, shouldMakeRequest(delConfig) ? "DELETE" : undefined, delConfig, actionCreators, dispatch)
+  const del = useCreateAction<Schema>(handleSuccessDelete as HandleSuccess<Schema>, shouldMakeRequest(deleteConfig) ? "DELETE" : undefined, deleteConfig, actionCreators, dispatch)
 
+  // clear
   const handleSuccessClear = () => {
     const { createClear } = actionCreators
     dispatch(createClear())
   }
   const clear = useCreateAction<Schema>(handleSuccessClear as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
 
+  // update state (locally)
   const handleSuccessUpdateState = (item: Schema) => {
     const { createUpdateItem } = actionCreators
-    const index = identify(state.data, item)
+    const index = identify(state.data, item, config.idKey)
     if (index === -1) return
     dispatch(createUpdateItem(index, item))
   }

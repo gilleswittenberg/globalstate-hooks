@@ -228,6 +228,32 @@ describe("useRestActions", () => {
       ])
     })
 
+    it("idKey", async () => {
+
+      const items = [
+        { uuid: "3067d397-a3ed-4802-bed7-a6a8ac3c12eb", name: "Fifi", type: "dog" },
+        { uuid: "9b21d88d-4372-4112-a09b-df3ba15be522", name: "Milo", type: "cat" }
+      ]
+
+      const { result } = renderHook(() => useRestActions<Pet>({
+        api,
+        idKey: "uuid"
+      }, items))
+
+      const updatedItem = { uuid: "9b21d88d-4372-4112-a09b-df3ba15be522", name: "Milo sr.", type: "cat" }
+
+      nock(domain)
+        .put(`/pets/${ items[1].uuid }/`)
+        .reply(200, updatedItem)
+
+      const [, { update }] = result.current
+      await act(async () => await update(updatedItem))
+
+      const [state1] = result.current
+      expect(state1.data?.[1]).toEqual(updatedItem)
+    })
+
+
     it("mapBody", async () => {
       const { result } = renderHook(() => useRestActions<Pet>({
         api,

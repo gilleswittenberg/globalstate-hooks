@@ -16,4 +16,10 @@ describe("mergeConfig", () => {
     const mergedConfig1 = mergeConfig(undefined, mergedConfig)
     expect(mergedConfig1.api).toEqual({ additionalHeaders })
   })
+
+  it("idKey", () => {
+    const config = { idKey: "uuid" }
+    const mergedConfig = mergeConfig(config)
+    expect(mergedConfig.idKey).toEqual("uuid")
+  })
 })
