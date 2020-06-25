@@ -1,7 +1,7 @@
 import nock from "nock"
 import { renderHook, act } from "@testing-library/react-hooks"
 import useRestActions from "./useRestActions"
-import type { Id } from "./useRestReducer"
+import type { Id } from "./reducer/useRestReducer"
 
 const domain = "http://localhost/"
 const name = "pets"

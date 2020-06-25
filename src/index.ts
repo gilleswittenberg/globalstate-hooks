@@ -1,5 +1,5 @@
 import "./misc/polyfills"
-import type { ItemsState, RecordState } from "./useRestReducer"
+import type { ItemsState, RecordState } from "./reducer/useRestReducer"
 import type { RequestHeaders, ResolvedRequest } from "./methods/fetch"
 import useRestActions, { ItemsActions } from "./useRestActions"
 import useRestRecordActions, { RecordActions } from "./useRestRecordActions"

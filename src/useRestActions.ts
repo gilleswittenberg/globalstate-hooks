@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import type { HandleSuccess } from "./actions/useCreateAction"
 import type { Config } from "./config/config"
-import useRestReducer from "./useRestReducer"
+import useRestReducer from "./reducer/useRestReducer"
 import mergeConfig from "./config/mergeConfig"
 import useCreateAction from "./actions/useCreateAction"
 import identify from "./utils/identify"

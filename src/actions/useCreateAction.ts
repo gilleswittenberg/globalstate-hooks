@@ -1,6 +1,6 @@
-import type { ActionCreators, ItemsAction, RecordAction } from "../useRestReducer"
+import type { ActionCreators, ItemsAction, RecordAction } from "../reducer/useRestReducer"
 import type { Json } from "../types/Json"
-import type { ItemsState, RecordState } from "../useRestReducer"
+import type { ItemsState, RecordState } from "../reducer/useRestReducer"
 import type { Method, RequestURL, RequestHeaders, ResolvedRequest } from "../methods/fetch"
 import type { Config } from "../config/config"
 import { Dispatch, useCallback } from "react"

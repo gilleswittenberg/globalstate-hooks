@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import type { Config } from "./config/config"
 import type { HandleSuccess } from "./actions/useCreateAction"
-import { useRestRecordReducer, RecordState, RecordAction } from "./useRestReducer"
+import { useRestRecordReducer, RecordState, RecordAction } from "./reducer/useRestReducer"
 import mergeConfig from "./config/mergeConfig"
 import useCreateAction from "./actions/useCreateAction"
 import shouldMakeRequest from "./config/shouldMakeRequest"
@@ -61,7 +61,7 @@ const useRestRecordActions = <Schema>(conf?: Partial<Config>, initialData?: Sche
     index: indexStable,
     update: updateStable,
     clear: clearStable,
-    updateState: updateStateStable 
+    updateState: updateStateStable
   } as RecordActions<Schema>] as const
 }
 

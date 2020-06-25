@@ -1,11 +1,11 @@
-import type { Optional } from "./types/Optional"
-import type { Plural } from "./types/Plural"
-import type { JsonObject } from "./types/Json"
-import type { ErrorMessage, ErrorMessages } from "./types/ErrorMessage"
-import type { ResolvedRequest, ResolvedRequests } from "./methods/fetch"
+import type { Optional } from "../types/Optional"
+import type { Plural } from "../types/Plural"
+import type { JsonObject } from "../types/Json"
+import type { ErrorMessage, ErrorMessages } from "../types/ErrorMessage"
+import type { ResolvedRequest, ResolvedRequests } from "../methods/fetch"
 import { useReducer } from "react"
 import produce from "immer"
-import isSimpleValue from "./utils/isSimpleValue"
+import isSimpleValue from "../utils/isSimpleValue"
 
 export type Index = number
 export type Uuid = string

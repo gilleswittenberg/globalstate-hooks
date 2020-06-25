@@ -1,4 +1,4 @@
-import type { Id } from "../useRestReducer"
+import type { Id } from "../reducer/useRestReducer"
 import type { APIConfig } from "../config/config"
 import type { RequestURL } from "./fetch"
 import queryParams from "./queryParams"
