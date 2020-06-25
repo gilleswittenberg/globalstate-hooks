@@ -1,3 +1,4 @@
+import { useCallback } from "react"
 import type { HandleSuccess } from "./actions/useCreateAction"
 import type { Config } from "./config/config"
 import useRestReducer from "./useRestReducer"
@@ -33,6 +34,7 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     dispatch(createSetItems(result))
   }
   const index = useCreateAction<Schema>(handleSuccessIndex as HandleSuccess<Schema>, shouldMakeRequest(indexConfig) ? "GET" : undefined, indexConfig, actionCreators, dispatch)
+  const indexStable = useCallback(index, [])
 
   // create
   const createConfig = mergeConfig(config.create, config)
@@ -41,6 +43,7 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     dispatch(createAddItem(result))
   }
   const create = useCreateAction<Schema>(handleSuccessCreate as HandleSuccess<Schema>, shouldMakeRequest(createConfig) ? "POST" : undefined, createConfig, actionCreators, dispatch)
+  const createStable = useCallback(create, [])
 
   // read
   const readConfig = mergeConfig(config.read, config)
@@ -49,6 +52,7 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     dispatch(createAddItem(result))
   }
   const read = useCreateAction<Schema>(handleSuccessRead as HandleSuccess<Schema>, shouldMakeRequest(readConfig) ? "GET" : undefined, readConfig, actionCreators, dispatch)
+  const readStable = useCallback(read, [])
 
   // update
   const updateConfig = mergeConfig(config.update, config)
@@ -62,6 +66,7 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     }
   }
   const update = useCreateAction<Schema>(handleSuccessUpdate as HandleSuccess<Schema>, shouldMakeRequest(updateConfig) ? "PUT" : undefined, updateConfig, actionCreators, dispatch)
+  const updateStable = useCallback(update, [])
 
   // delete
   const deleteConfig = mergeConfig(config.del, config)
@@ -72,6 +77,7 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     dispatch(createRemoveItem(index))
   }
   const del = useCreateAction<Schema>(handleSuccessDelete as HandleSuccess<Schema>, shouldMakeRequest(deleteConfig) ? "DELETE" : undefined, deleteConfig, actionCreators, dispatch)
+  const delStable = useCallback(del, [])
 
   // clear
   const handleSuccessClear = () => {
@@ -79,6 +85,7 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     dispatch(createClear())
   }
   const clear = useCreateAction<Schema>(handleSuccessClear as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
+  const clearStable = useCallback(clear, [])
 
   // update state (locally)
   const handleSuccessUpdateState = (item: Schema) => {
@@ -88,8 +95,17 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     dispatch(createUpdateItem(index, item))
   }
   const updateState = useCreateAction<Schema>(handleSuccessUpdateState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
+  const updateStateStable = useCallback(updateState, [])
 
-  return [state, { index, create, read, update, del, clear, updateState } as ItemsActions<Schema>] as const
+  return [state, {
+    index: indexStable,
+    create: createStable,
+    read: readStable,
+    update: updateStable,
+    del: delStable,
+    clear: clearStable,
+    updateState: updateStateStable
+  } as ItemsActions<Schema>] as const
 }
 
 export default useRestActions
