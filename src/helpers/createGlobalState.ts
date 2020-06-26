@@ -4,8 +4,8 @@ import type { RecordActions } from "../useRestRecordActions"
 import { createContext, useContext } from "react"
 
 type BaseContext = {
-  state: Record<string, ItemsState<unknown> | RecordState<unknown>>
-  actions: Record<string, ItemsActions<unknown> | RecordActions<unknown>>
+  state: Record<string, ItemsState<any> | RecordState<any>>
+  actions: Record<string, ItemsActions<any> | RecordActions<any>>
 }
 
 export default <Context extends BaseContext>() => {

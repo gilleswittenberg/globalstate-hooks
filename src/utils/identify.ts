@@ -6,7 +6,7 @@ export default <Schema>(items: Schema[] | undefined, item: Schema, idKey: IdKey 
   return items.findIndex(i => equalItems(i, item, idKey))
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 const equalItems = (item: any, item1: any, idKey: IdKey = "id") => {
   return item?.[idKey] === item1?.[idKey]
 }

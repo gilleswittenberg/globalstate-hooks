@@ -14,7 +14,7 @@ export type OId = Optional<Id>
 export type Key = string
 export type KeyPath = Plural<Key | Index>
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export type BaseState<Schema = any> = {
   isGetting: boolean
   isPosting: boolean
@@ -24,7 +24,7 @@ export type BaseState<Schema = any> = {
   data: undefined | Schema
   requests: ResolvedRequests
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export type ComputedState<Schema = any> = BaseState<Schema> & {
   isFetching: boolean
   isUpdating: boolean
