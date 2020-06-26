@@ -18,12 +18,12 @@ export default <Context extends BaseContext>() => {
 
   const useGlobalState = () => {
     const { state } = useContext(GlobalStateContext) as Context
-    return state
+    return state as Context["state"]
   }
 
   const useGlobalActions = () => {
     const { actions } = useContext(GlobalStateContext) as Context
-    return actions
+    return actions as Context["actions"]
   }
 
   return {
