@@ -28,6 +28,7 @@ type BaseConfig = {
   invalidHandling: InvalidHandling
   afterSuccess: AfterMethod
   afterFailure: AfterMethod
+  shouldIndex: boolean
 }
 type SubConfig = {
   index?: Partial<BaseConfig>
@@ -48,5 +49,6 @@ export const defaultConfig: Config = {
   validate,
   invalidHandling: "abort",
   afterSuccess: afterMethod,
-  afterFailure: afterMethod
+  afterFailure: afterMethod,
+  shouldIndex: false
 }

@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useEffect } from "react"
 import type { HandleSuccess } from "./actions/useCreateAction"
 import type { Config } from "./config/config"
 import useRestReducer from "./reducer/useRestReducer"
@@ -96,6 +96,11 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
   }
   const updateState = useCreateAction<Schema>(handleSuccessUpdateState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
   const updateStateStable = useCallback(updateState, [])
+
+  useEffect(() => {
+    if (config.shouldIndex === false) return
+    indexStable()
+  }, [indexStable])
 
   return [state, {
     index: indexStable,
