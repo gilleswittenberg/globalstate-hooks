@@ -253,6 +253,13 @@ describe("useRestActions", () => {
       expect(state1.data?.[1]).toEqual(updatedItem)
     })
 
+    it("shouldIndex", async () => {
+
+      renderHook(() => useRestActions<Pet>({
+        api,
+        shouldIndex: true
+      }, items))
+    })
 
     it("mapBody", async () => {
       const { result } = renderHook(() => useRestActions<Pet>({
