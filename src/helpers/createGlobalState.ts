@@ -16,14 +16,16 @@ export default <Context extends BaseContext>() => {
     return (state as Context["state"])[key].data
   }
 
-  const useGlobalState = () => {
+  const useGlobalState = (key?: keyof Context["state"]) => {
     const { state } = useContext(GlobalStateContext) as Context
-    return state as Context["state"]
+    if (key === undefined) return state as Context["state"]
+    return (state as Context["state"])[key]
   }
 
-  const useGlobalActions = () => {
+  const useGlobalActions = (key?: keyof Context["actions"]) => {
     const { actions } = useContext(GlobalStateContext) as Context
-    return actions as Context["actions"]
+    if (key === undefined) return actions as Context["actions"]
+    return (actions as Context["actions"])[key]
   }
 
   return {
