@@ -258,7 +258,7 @@ describe("useRestActions", () => {
       renderHook(() => useRestActions<Pet>({
         api,
         shouldIndex: true
-      }, items))
+      }))
     })
 
     it("mapBody", async () => {
