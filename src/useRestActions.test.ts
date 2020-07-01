@@ -298,7 +298,8 @@ describe("useRestActions", () => {
       const [, { del }] = result.current
       await act(async () => await del(items[0]))
 
-      expect(state.data.length).toBe(1)
+      const [state] = result.current
+      expect(state.data?.length).toBe(1)
     })
 
     it("mapBody", async () => {
@@ -349,7 +350,11 @@ describe("useRestActions", () => {
         .post("/pets/")
         .reply(400, { error: "INVALID_REQUEST" })
       const [, { create }] = result.current
-      await act(async () => await create(item))
+      await act(async () => {
+        try {
+          await create(item)
+        } catch (err) {}
+      })
       expect(called).toBe(1)
     })
   })
