@@ -3,7 +3,7 @@ import type { Plural } from "../types/Plural"
 import type { JsonObject } from "../types/Json"
 import type { ErrorMessage, ErrorMessages } from "../types/ErrorMessage"
 import type { ResolvedRequest, ResolvedRequests } from "../methods/fetch"
-import {useCallback, useMemo, useReducer} from "react"
+import {useMemo, useReducer} from "react"
 import produce from "immer"
 import isSimpleValue from "../utils/isSimpleValue"
 
