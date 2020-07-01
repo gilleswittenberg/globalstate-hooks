@@ -228,37 +228,77 @@ describe("useRestActions", () => {
       ])
     })
 
-    it("idKey", async () => {
+    describe("idKey", () => {
+
+      it("update", async () => {
+
+        const items = [
+          { uuid: "3067d397-a3ed-4802-bed7-a6a8ac3c12eb", name: "Fifi", type: "dog" },
+          { uuid: "9b21d88d-4372-4112-a09b-df3ba15be522", name: "Milo", type: "cat" }
+        ]
+
+        const { result } = renderHook(() => useRestActions<Pet>({
+          api,
+          idKey: "uuid"
+        }, items))
+
+        const updatedItem = { uuid: "9b21d88d-4372-4112-a09b-df3ba15be522", name: "Milo sr.", type: "cat" }
+
+        nock(domain)
+          .put(`/pets/${ items[1].uuid }/`)
+          .reply(200, updatedItem)
+
+        const [, { update }] = result.current
+        await act(async () => await update(updatedItem))
+
+        const [state] = result.current
+        expect(state.data?.[1]).toEqual(updatedItem)
+      })
+
+      it("del", async () => {
+
+        const items = [
+          { uuid: "3067d397-a3ed-4802-bed7-a6a8ac3c12eb", name: "Fifi", type: "dog" },
+          { uuid: "9b21d88d-4372-4112-a09b-df3ba15be522", name: "Milo", type: "cat" }
+        ]
+
+        const { result } = renderHook(() => useRestActions<Pet>({
+          api,
+          idKey: "uuid"
+        }, items))
+
+        nock(domain)
+          .delete(`/pets/${ items[1].uuid }/`)
+          .reply(200)
+
+        const [, { del }] = result.current
+        await act(async () => await del(items[1]))
+
+        const [state] = result.current
+        expect(state.data).toEqual([items[0]])
+      })
+    })
+
+    xit("shouldIndex", async () => {
 
       const items = [
         { uuid: "3067d397-a3ed-4802-bed7-a6a8ac3c12eb", name: "Fifi", type: "dog" },
         { uuid: "9b21d88d-4372-4112-a09b-df3ba15be522", name: "Milo", type: "cat" }
       ]
 
-      const { result } = renderHook(() => useRestActions<Pet>({
-        api,
-        idKey: "uuid"
-      }, items))
-
-      const updatedItem = { uuid: "9b21d88d-4372-4112-a09b-df3ba15be522", name: "Milo sr.", type: "cat" }
-
       nock(domain)
-        .put(`/pets/${ items[1].uuid }/`)
-        .reply(200, updatedItem)
+        .get("/pets/")
+        .reply(200, items)
 
-      const [, { update }] = result.current
-      await act(async () => await update(updatedItem))
-
-      const [state1] = result.current
-      expect(state1.data?.[1]).toEqual(updatedItem)
-    })
-
-    it("shouldIndex", async () => {
-
-      renderHook(() => useRestActions<Pet>({
+      const { result } = renderHook(() => useRestActions<Pet>({
         api,
         shouldIndex: true
       }))
+
+      const [, { del }] = result.current
+      await act(async () => await del(items[0]))
+
+      expect(state.data.length).toBe(1)
     })
 
     it("mapBody", async () => {
