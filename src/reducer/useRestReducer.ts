@@ -3,7 +3,7 @@ import type { Plural } from "../types/Plural"
 import type { JsonObject } from "../types/Json"
 import type { ErrorMessage, ErrorMessages } from "../types/ErrorMessage"
 import type { ResolvedRequest, ResolvedRequests } from "../methods/fetch"
-import { useReducer } from "react"
+import {useCallback, useMemo, useReducer} from "react"
 import produce from "immer"
 import isSimpleValue from "../utils/isSimpleValue"
 
@@ -138,6 +138,7 @@ const createActionCreatorsRecord = <Schema>() => ({
   createSetData: createSetData as (data: Schema | undefined) => RecordAction<Schema>,
   createUpdatePartial: createUpdatePartial as (path: KeyPath, data: Schema) => RecordAction<Schema>
 })
+
 const createActionCreatorsItems = <Schema>() => ({
   ...actionCreators,
   createSetItems: createSetItems as (items: Schema[]) => ItemsAction<Schema>,
@@ -287,7 +288,7 @@ export const useRestRecordReducer = <Schema>(initialData?: Schema) => {
     recordReducer as (state: RecordState<Schema>, action: RecordAction<Schema>) => RecordState<Schema>,
     { ...initialState, data: initialData } as RecordState<Schema>
   )
-  const actionCreators = createActionCreatorsRecord<Schema>()
+  const actionCreators = useMemo(() => createActionCreatorsRecord<Schema>(), [])
   return [state, dispatch, actionCreators] as const
 }
 const useRestReducer = <Schema>(initialData?: Schema[]) => {
@@ -295,7 +296,7 @@ const useRestReducer = <Schema>(initialData?: Schema[]) => {
     itemsReducer as (state: ItemsState<Schema>, action: ItemsAction<Schema>) => ItemsState<Schema>,
     { ...initialState, data: initialData } as ItemsState<Schema>
   )
-  const actionCreators = createActionCreatorsItems<Schema>()
+  const actionCreators = useMemo(() => createActionCreatorsItems<Schema>(), [])
   return [state, dispatch, actionCreators] as const
 }
 export default useRestReducer

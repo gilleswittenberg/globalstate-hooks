@@ -29,34 +29,34 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
 
   // index
   const indexConfig = mergeConfig(config.index, config)
-  const handleSuccessIndex = (result: Schema[]) => {
+  const handleSuccessIndex = useCallback((result: Schema[]) => {
     const { createSetItems } = actionCreators
     dispatch(createSetItems(result))
-  }
+  }, [ actionCreators, dispatch ])
   const index = useCreateAction<Schema>(handleSuccessIndex as HandleSuccess<Schema>, shouldMakeRequest(indexConfig) ? "GET" : undefined, indexConfig, actionCreators, dispatch)
-  const indexStable = useCallback(index, [])
+  const indexStable = useCallback(index, [ handleSuccessIndex, indexConfig, actionCreators, dispatch ])
 
   // create
   const createConfig = mergeConfig(config.create, config)
-  const handleSuccessCreate = (result: Schema) => {
+  const handleSuccessCreate = useCallback((result: Schema) => {
     const { createAddItem } = actionCreators
     dispatch(createAddItem(result))
-  }
+  }, [ actionCreators, dispatch ])
   const create = useCreateAction<Schema>(handleSuccessCreate as HandleSuccess<Schema>, shouldMakeRequest(createConfig) ? "POST" : undefined, createConfig, actionCreators, dispatch)
-  const createStable = useCallback(create, [])
+  const createStable = useCallback(create, [ handleSuccessCreate, createConfig, actionCreators, dispatch ])
 
   // read
   const readConfig = mergeConfig(config.read, config)
-  const handleSuccessRead = (result: Schema) => {
+  const handleSuccessRead = useCallback((result: Schema) => {
     const { createAddItem } = actionCreators
     dispatch(createAddItem(result))
-  }
+  }, [ actionCreators, dispatch ])
   const read = useCreateAction<Schema>(handleSuccessRead as HandleSuccess<Schema>, shouldMakeRequest(readConfig) ? "GET" : undefined, readConfig, actionCreators, dispatch)
-  const readStable = useCallback(read, [])
+  const readStable = useCallback(read, [ handleSuccessRead, readConfig, actionCreators, dispatch ])
 
   // update
   const updateConfig = mergeConfig(config.update, config)
-  const handleSuccessUpdate = (item: Schema) => {
+  const handleSuccessUpdate = useCallback((item: Schema) => {
     const { createUpdateItem, createAddItem } = actionCreators
     const index = identify(state.data, item, config.idKey)
     if (index > -1) {
@@ -64,38 +64,40 @@ const useRestActions = <Schema>(conf?: Partial<Config>, initialData?: Schema[]) 
     } else {
       dispatch(createAddItem(item))
     }
-  }
+  }, [ actionCreators, state, config, dispatch ])
+
   const update = useCreateAction<Schema>(handleSuccessUpdate as HandleSuccess<Schema>, shouldMakeRequest(updateConfig) ? "PUT" : undefined, updateConfig, actionCreators, dispatch)
-  const updateStable = useCallback(update, [])
+  const updateStable = useCallback(update, [ handleSuccessUpdate, updateConfig, actionCreators, dispatch ])
 
   // delete
   const deleteConfig = mergeConfig(config.del, config)
-  const handleSuccessDelete = (item: Schema) => {
+  const handleSuccessDelete = useCallback((item: Schema) => {
     const { createRemoveItem } = actionCreators
     const index = identify(state.data, item, config.idKey)
     if (index === -1) return
     dispatch(createRemoveItem(index))
-  }
+  }, [ actionCreators, state, config, dispatch ])
+
   const del = useCreateAction<Schema>(handleSuccessDelete as HandleSuccess<Schema>, shouldMakeRequest(deleteConfig) ? "DELETE" : undefined, deleteConfig, actionCreators, dispatch)
-  const delStable = useCallback(del, [])
+  const delStable = useCallback(del, [ handleSuccessDelete, deleteConfig, actionCreators, dispatch ])
 
   // clear
-  const handleSuccessClear = () => {
+  const handleSuccessClear = useCallback(() => {
     const { createClear } = actionCreators
     dispatch(createClear())
-  }
+  }, [ actionCreators, dispatch ])
   const clear = useCreateAction<Schema>(handleSuccessClear as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
-  const clearStable = useCallback(clear, [])
+  const clearStable = useCallback(clear, [ handleSuccessClear, config, actionCreators, dispatch ])
 
   // update state (locally)
-  const handleSuccessUpdateState = (item: Schema) => {
+  const handleSuccessUpdateState = useCallback((item: Schema) => {
     const { createUpdateItem } = actionCreators
     const index = identify(state.data, item, config.idKey)
     if (index === -1) return
     dispatch(createUpdateItem(index, item))
-  }
+  }, [ actionCreators, state, config, dispatch ])
   const updateState = useCreateAction<Schema>(handleSuccessUpdateState as HandleSuccess<Schema>, undefined, config, actionCreators, dispatch)
-  const updateStateStable = useCallback(updateState, [])
+  const updateStateStable = useCallback(updateState, [ handleSuccessUpdateState, config, actionCreators, dispatch ])
 
   useEffect(() => {
     if (config.shouldIndex === false) return
