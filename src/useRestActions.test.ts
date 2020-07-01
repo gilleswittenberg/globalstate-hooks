@@ -282,8 +282,8 @@ describe("useRestActions", () => {
     xit("shouldIndex", async () => {
 
       const items = [
-        { uuid: "3067d397-a3ed-4802-bed7-a6a8ac3c12eb", name: "Fifi", type: "dog" },
-        { uuid: "9b21d88d-4372-4112-a09b-df3ba15be522", name: "Milo", type: "cat" }
+        { id: 1, name: "Fifi", type: "dog" },
+        { id: 2, name: "Milo", type: "cat" }
       ]
 
       nock(domain)
@@ -294,6 +294,10 @@ describe("useRestActions", () => {
         api,
         shouldIndex: true
       }))
+
+      nock(domain)
+        .delete("/pets/1/")
+        .reply(200, [])
 
       const [, { del }] = result.current
       await act(async () => await del(items[0]))

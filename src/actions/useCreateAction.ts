@@ -108,7 +108,7 @@ export default <
     if (api === undefined) return
 
     // REST request
-    
+
     const url = createUrl(api, (data as any)?.[idKey])
     const { additionalHeaders } = api
     const mappedData = mapBody(data)
@@ -117,7 +117,7 @@ export default <
         await makeRequest(method, url, additionalHeaders) :
         await makeRequest(method, url, additionalHeaders, mappedData as Json)
     if (request.ok) {
-      
+
       const result = request.result !== undefined ? mapResponse(request.result) as Schema : { [idKey]: (data as any)?.[idKey] } as Partial<Schema>
       if (handleInvalid(result, validate(result), invalidHandling)) return
       doHandleSuccess(result)
@@ -133,6 +133,6 @@ export default <
     }
   }
 
-  return useCallback((method !== undefined ? ret : retLocal), [config])
+  return useCallback((method !== undefined ? ret : retLocal), [config, handleSuccess])
 
 }
