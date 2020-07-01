@@ -123,9 +123,13 @@ export default <
       doHandleSuccess(result)
       // @TODO: Pass result, id, config
       afterSuccess(request)
+
+      return Promise.resolve()
     } else {
       // @TODO: Pass result (error response), id, config
       afterFailure(request)
+
+      return Promise.reject(request.errorMessage)
     }
   }
 
